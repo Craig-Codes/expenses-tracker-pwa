@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 
 import { Platform } from "@ionic/angular";
-import { Plugins, capacitor } from "@capacitor/core";
+import { Plugins, Capacitor } from "@capacitor/core";
 
 @Component({
   selector: "app-root",
@@ -15,7 +15,7 @@ export class AppComponent {
 
   initializeApp() {
     this.platform.ready().then(() => {
-      if (capacitor.isPluginAvaliable("SplashScreen")) {
+      if (Capacitor.isPluginAvailable("SplashScreen")) {
         Plugins.SplashScreen.hide();
       }
     });
