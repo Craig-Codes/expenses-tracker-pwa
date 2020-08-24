@@ -7,4 +7,9 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content> </ion-content>
+<ion-content class="custom-background">
+  <ion-segment (ionChange)="onFilterUpdate($event)" value="recent">
+    <ion-segment-button value="recent">Most Recent</ion-segment-button>
+    <ion-segment-button value="cost">Total Cost</ion-segment-button>
+  </ion-segment>
+</ion-content>
