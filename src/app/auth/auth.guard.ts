@@ -18,7 +18,7 @@ export class AuthGuard implements CanLoad {
       console.log("route blocked, not logged in!");
       this.router.navigateByUrl("/auth"); // if not logged in, navigate to auth page to log user in
     }
-    console.log("logged in, allowed into route!");
+    console.log("logged in, allowed into route! Redirecting...");
     return this.userService.loggedIn; // if true, code after the guard runs (we navigate successful). Must return a true boolean to continue to route
   }
 }

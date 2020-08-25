@@ -2,6 +2,7 @@ import { Component } from "@angular/core";
 
 import { Platform } from "@ionic/angular";
 import { Plugins, Capacitor } from "@capacitor/core";
+import { UserService } from "./user.service";
 
 @Component({
   selector: "app-root",
@@ -9,7 +10,7 @@ import { Plugins, Capacitor } from "@capacitor/core";
   styleUrls: ["app.component.scss"],
 })
 export class AppComponent {
-  constructor(private platform: Platform) {
+  constructor(private platform: Platform, private userService: UserService) {
     this.initializeApp();
   }
 
@@ -19,5 +20,10 @@ export class AppComponent {
         Plugins.SplashScreen.hide();
       }
     });
+  }
+
+  onLogout() {
+    console.log("Pressed");
+    this.userService.signOut();
   }
 }
