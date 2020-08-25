@@ -1,9 +1,10 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>auth</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
-
+  <h1>Expenses Tracker</h1>
+  <hr />
+  <p>Please Login using an option bellow:</p>
+  <ion-buttons>
+    <ion-button (click)="useGoogle()">Google</ion-button>
+    <ion-button (click)="useFacebook()">Facebook</ion-button>
+    <ion-button (click)="useAmazon()">Amazon</ion-button>
+  </ion-buttons>
 </ion-content>
