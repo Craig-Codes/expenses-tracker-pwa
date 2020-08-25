@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 
 import { SocialAuthService } from "angularx-social-login";
-import { SocialUser } from "angularx-social-login";
+
 import {
   GoogleLoginProvider,
   FacebookLoginProvider,
@@ -16,8 +16,6 @@ import { Router } from "@angular/router";
   styleUrls: ["./auth.page.scss"],
 })
 export class AuthPage implements OnInit {
-  user: SocialUser;
-
   constructor(
     private authService: SocialAuthService,
     private userService: UserService,
@@ -26,9 +24,7 @@ export class AuthPage implements OnInit {
 
   ngOnInit() {
     this.authService.authState.subscribe((user) => {
-      this.user = user;
-      this.userService.user = this.user;
-      console.log(user);
+      this.userService.user = user;
       this.userService.loggedIn = user != null;
       console.log(this.userService.loggedIn);
       console.log(this.userService.user);

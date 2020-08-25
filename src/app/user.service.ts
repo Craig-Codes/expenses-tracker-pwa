@@ -10,12 +10,13 @@ import { Router } from "@angular/router";
 export class UserService implements OnInit {
   constructor(private authService: SocialAuthService, private router: Router) {}
   user: SocialUser;
-  loggedIn: boolean;
+  loggedIn: boolean = false;
 
   ngOnInit() {}
 
   signOut(): void {
     this.authService.signOut();
     this.router.navigate(["/", "auth"]);
+    console.log(this.user);
   }
 }
