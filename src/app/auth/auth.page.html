@@ -1,10 +1,46 @@
-<ion-content>
-  <h1>Expenses Tracker</h1>
-  <hr />
-  <p>Please Login using an option bellow:</p>
-  <ion-buttons>
-    <ion-button (click)="signInWithGoogle()">Google</ion-button>
-    <ion-button (click)="signInWithFB()">FB</ion-button>
-    <ion-button (click)="signInWithAmazon()">Amazon</ion-button>
-  </ion-buttons>
+<ion-content class="background vertical-align-content">
+  <ion-grid>
+    <ion-row class="row">
+      <ion-col class="ion-text-center ion-align-items-center">
+        <ion-card>
+          <h1>Expenses Tracker</h1>
+          <p>Login using a social option</p>
+          <hr />
+          <ion-buttons class="ion-justify-content-center">
+            <ion-button
+              fill="outline"
+              type="button"
+              (click)="signInWithGoogle()"
+              color="tertiary"
+            >
+              <ion-icon name="logo-google" slot="start"></ion-icon>
+              Google
+            </ion-button>
+          </ion-buttons>
+          <ion-buttons class="ion-justify-content-center">
+            <ion-button
+              fill="outline"
+              type="button"
+              (click)="signInWithFB()"
+              color="tertiary"
+            >
+              <ion-icon name="logo-facebook" slot="start"> </ion-icon>
+              Facebook
+            </ion-button>
+          </ion-buttons>
+          <ion-buttons class="ion-justify-content-center">
+            <ion-button
+              fill="outline"
+              type="button"
+              (click)="signInWithAmazon()"
+              color="tertiary"
+            >
+              <ion-icon name="logo-amazon" slot="start"> </ion-icon>
+              Amazon
+            </ion-button>
+          </ion-buttons>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
