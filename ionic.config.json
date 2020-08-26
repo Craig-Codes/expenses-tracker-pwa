@@ -1,5 +1,8 @@
 {
   "name": "Expenses Tracker App",
-  "integrations": {},
+  "integrations": {
+    "cordova": {},
+    "capacitor": {}
+  },
   "type": "angular"
 }

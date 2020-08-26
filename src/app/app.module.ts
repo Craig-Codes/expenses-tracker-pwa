@@ -34,12 +34,13 @@ import {
       useValue: {
         autoLogin: true,
         providers: [
-          // {
-          //   id: GoogleLoginProvider.PROVIDER_ID,
-          //   provider: new GoogleLoginProvider(
-          //     "624796833023-clhjgupm0pu6vgga7k5i5bsfp6qp6egh.apps.googleusercontent.com"
-          //   ),
-          // },
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider(
+              "368144912503-vfpr4p2goiel45uep19fkba73s5e2cp7.apps.googleusercontent.com"
+              // https://console.developers.google.com/apis/credentials?folder=&organizationId=&project=geometric-orbit-287508 - lock down to site url!
+            ),
+          },
           {
             id: FacebookLoginProvider.PROVIDER_ID,
             provider: new FacebookLoginProvider("254906718841267"),
@@ -48,8 +49,8 @@ import {
             id: AmazonLoginProvider.PROVIDER_ID,
             provider: new AmazonLoginProvider(
               "amzn1.application-oa2-client.f074ae67c0a146b6902cc0c4a3297935"
-            ),
-          },
+            ), // amzn1.application-oa2-client.d652e2c7f0964b00aef896f9100d96c6 - mine isn't working. Try once app has been deployed and lock down with web-hosted address!
+          }, // amzn1.application-oa2-client.f074ae67c0a146b6902cc0c4a3297935
         ],
       } as SocialAuthServiceConfig,
     },
