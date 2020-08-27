@@ -15,17 +15,24 @@ export class AllTripsPage implements OnInit, OnDestroy {
   orderedTrips: Trip[];
   private tabsValue = "cost";
 
+  isLoading = false;
+
   private tripsSubscription: Subscription;
 
   ngOnInit() {
     // start with relevant trips being ordered by Date
+    this.isLoading = true;
     this.tripsSubscription = this.dataService.trips.subscribe((tripsArray) => {
-      this.retrievedTrips = tripsArray;
-      // orderedTrips array needs to be a seperate array in memory
-      this.orderedTrips = this.retrievedTrips.slice(0);
-      // each time we get an update to the array we need to re-order - firstly get the tab value, then call the onFilterLoad method to filter the tripsArray
-      this.tabsValue = document.querySelector("ion-segment").value;
-      this.onFilterLoad(this.tabsValue);
+      setTimeout(() => {
+        // faking a slow api response to see spinner - remove once db is setup!
+        this.retrievedTrips = tripsArray;
+        // orderedTrips array needs to be a seperate array in memory
+        this.orderedTrips = this.retrievedTrips.slice(0);
+        // each time we get an update to the array we need to re-order - firstly get the tab value, then call the onFilterLoad method to filter the tripsArray
+        this.tabsValue = document.querySelector("ion-segment").value;
+        this.onFilterLoad(this.tabsValue);
+        this.isLoading = false;
+      }, 2000);
     });
   }
 

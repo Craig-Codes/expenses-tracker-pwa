@@ -26,6 +26,7 @@ export class AuthPage implements OnInit {
     this.authService.authState.subscribe((user) => {
       this.userService.user = user;
       this.userService.loggedIn = user != null;
+      // evaluates the expression, so if user isn't null it returns true (loggedIn = true), if user is null it returns false
       console.log(this.userService.loggedIn);
       console.log(this.userService.user);
       if (this.userService.loggedIn === true) {
