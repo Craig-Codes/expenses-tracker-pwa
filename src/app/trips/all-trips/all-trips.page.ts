@@ -24,7 +24,7 @@ export class AllTripsPage implements OnInit, OnDestroy {
   ngOnInit() {
     // start with relevant trips being ordered by Date
     this.tripsSubscription = this.dataService.trips.subscribe((tripsArray) => {
-      this.isLoading = true;
+      this.isLoading = true; // add a loading spinner
       setTimeout(() => {
         // faking a slow api response to see spinner - remove once db is setup!
         this.retrievedTrips = tripsArray;
@@ -35,7 +35,7 @@ export class AllTripsPage implements OnInit, OnDestroy {
         this.onFilterLoad(this.tabsValue);
         // workout the total amount of money to be claimed
         this.calculateTotal(tripsArray);
-        this.isLoading = false;
+        this.isLoading = false; // once all tasks are complete, remove the loading spinner
       }, 2000);
     });
   }
@@ -95,7 +95,7 @@ export class AllTripsPage implements OnInit, OnDestroy {
     );
   }
 
-  // Calculate the total amoutn owed from all trips - loop through the array and add the total to a variable for output
+  // Calculate the total amoutn owed from all trips - loop through the array and add the total to a variable for output. This method is called each time a trip is updated via subscriptions
   calculateTotal(trips: Trip[]) {
     this.totalToClaim = 0;
     trips.forEach((trip) => {

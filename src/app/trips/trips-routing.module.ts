@@ -34,6 +34,10 @@ const routes: Routes = [
       },
     ],
   },
+  {
+    path: 'trip-edit',
+    loadChildren: () => import('./trip-edit/trip-edit.module').then( m => m.TripEditPageModule)
+  },
 ];
 
 @NgModule({
