@@ -18,12 +18,31 @@
     </ion-row>
   </ion-grid>
 
-  <ion-row>
-    <ion-col size="12" size-sm="8" offset-sm="2" class="ion-text-center">
-      <ion-button color="primary" [routerLink]="['/trip-edit', tripId]">
-        <ion-icon name="create-outline" slot="start"></ion-icon>Edit
-        Trip</ion-button
-      >
-    </ion-col>
-  </ion-row>
+  <ion-grid *ngIf="!isLoading">
+    <ion-row>
+      <ion-col size="12" size-sm="8" offset-sm="2" class="ion-text-center">
+        <ion-button color="primary" [routerLink]="['/trip-edit', tripId]">
+          <ion-icon name="create-outline" slot="start"></ion-icon>Edit
+          Trip</ion-button
+        >
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12" size-sm="8" offset-sm="2" class="ion-text-center">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>{{ tripToEdit[0].location }}</ion-card-title>
+            <ion-card-subtitle class="date"
+              >{{ tripToEdit[0].dateFrom | date: 'dd/MM/yyyy'}} - {{
+              tripToEdit[0].dateTo | date: 'dd/MM/yyyy'}}</ion-card-subtitle
+            >
+          </ion-card-header>
+          <ion-card-content>
+            <p>{{ tripToEdit[0].description }}</p>
+            <p class="price">£{{ tripToEdit[0].price }}</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

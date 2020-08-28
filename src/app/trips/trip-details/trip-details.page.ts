@@ -50,6 +50,7 @@ export class TripDetailsPage implements OnInit, OnDestroy {
           this.isLoading = false; // we now have the necessary Trip information, remove loading spinner.
         });
     });
+    // After trips have loaded I then need to fetch all recipts with the trip id and display them here...
   }
 
   ngOnDestroy() {
