@@ -35,6 +35,13 @@ const routes: Routes = [
         (m) => m.TripEditPageModule
       ),
   },
+  {
+    path: "trip-details/:tripId",
+    loadChildren: () =>
+      import("../app/trips/trip-details/trip-details.module").then(
+        (m) => m.TripDetailsPageModule
+      ),
+  },
 ];
 
 @NgModule({

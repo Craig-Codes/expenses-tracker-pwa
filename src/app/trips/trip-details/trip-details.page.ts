@@ -1,17 +1,17 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
 import { Trip } from "src/app/models/trip.model";
-import { DataService } from "src/app/data.service";
 import { Subscription } from "rxjs";
-import { map } from "rxjs/operators";
+import { ActivatedRoute } from "@angular/router";
+import { DataService } from "src/app/data.service";
 import { NavController } from "@ionic/angular";
+import { map } from "rxjs/operators";
 
 @Component({
-  selector: "app-trip-edit",
-  templateUrl: "./trip-edit.page.html",
-  styleUrls: ["./trip-edit.page.scss"],
+  selector: "app-trip-details",
+  templateUrl: "./trip-details.page.html",
+  styleUrls: ["./trip-details.page.scss"],
 })
-export class TripEditPage implements OnInit, OnDestroy {
+export class TripDetailsPage implements OnInit, OnDestroy {
   tripToEdit: Trip[];
   tripId: string;
   private tripSubscription: Subscription;

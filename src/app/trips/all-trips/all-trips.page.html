@@ -52,7 +52,7 @@
           *ngFor="let trip of orderedTrips"
           approxItemHeight="70px"
         >
-          <ion-label [routerLink]="['/trip-edit', trip.tripId]">
+          <ion-label [routerLink]="['/trip-details', trip.tripId]">
             <h2>{{ trip.location }}</h2>
             <h5>
               {{trip.dateFrom | date: 'dd/MM/yyyy'}} - {{trip.dateTo | date:
