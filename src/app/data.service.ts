@@ -82,5 +82,6 @@ export class DataService {
     // get the current value of this._trips and add the newTrip onto it, creating a new value to emit
     this._trips.next(this._trips.getValue().concat(newTrip));
     // this._trips Trip array is now emitted out to all subscribers (the all-trips.page) to update the page automatically
+    // SEND THE UPDATED TRIP ARRAY TO THE BACKEND FOR SERVER STORAGE!!
   }
 }

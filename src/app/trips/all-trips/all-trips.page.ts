@@ -15,14 +15,16 @@ export class AllTripsPage implements OnInit, OnDestroy {
   orderedTrips: Trip[];
   private tabsValue = "cost";
 
+  totalToClaim: number;
+
   isLoading = false;
 
   private tripsSubscription: Subscription;
 
   ngOnInit() {
     // start with relevant trips being ordered by Date
-    this.isLoading = true;
     this.tripsSubscription = this.dataService.trips.subscribe((tripsArray) => {
+      this.isLoading = true;
       setTimeout(() => {
         // faking a slow api response to see spinner - remove once db is setup!
         this.retrievedTrips = tripsArray;
@@ -31,6 +33,8 @@ export class AllTripsPage implements OnInit, OnDestroy {
         // each time we get an update to the array we need to re-order - firstly get the tab value, then call the onFilterLoad method to filter the tripsArray
         this.tabsValue = document.querySelector("ion-segment").value;
         this.onFilterLoad(this.tabsValue);
+        // workout the total amount of money to be claimed
+        this.calculateTotal(tripsArray);
         this.isLoading = false;
       }, 2000);
     });
@@ -89,6 +93,15 @@ export class AllTripsPage implements OnInit, OnDestroy {
       new Date("2018-03-30"),
       4000
     );
+  }
+
+  // Calculate the total amoutn owed from all trips - loop through the array and add the total to a variable for output
+  calculateTotal(trips: Trip[]) {
+    this.totalToClaim = 0;
+    trips.forEach((trip) => {
+      console.log(trip);
+      this.totalToClaim += trip.price;
+    });
   }
 
   ngOnDestroy() {
