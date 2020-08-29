@@ -1,15 +1,17 @@
 import { Injectable, OnInit } from "@angular/core";
+import { AngularFireAuth } from "@angular/fire/auth";
 
-import { SocialAuthService } from "angularx-social-login";
-import { SocialUser } from "angularx-social-login";
 import { Router } from "@angular/router";
+import { ProfileModel } from "./models/profile.model";
+import { Observable } from "rxjs/internal/Observable";
+import { from } from "rxjs";
 
 @Injectable({
   providedIn: "root",
 })
 export class UserService implements OnInit {
-  constructor(private authService: SocialAuthService, private router: Router) {}
-  private _user: SocialUser; // stores the user's login information gained from angularx-social-login SocialAuthService
+  constructor(private router: Router, public angularFire: AngularFireAuth) {}
+  private _user: ProfileModel; // stores the user's login information gained from angularx-social-login SocialAuthService
   loggedIn: boolean = false;
 
   ngOnInit() {}
@@ -19,13 +21,12 @@ export class UserService implements OnInit {
     return this._user;
   }
 
-  set user(userData: SocialUser) {
+  set user(userData: ProfileModel) {
+    console.log(userData);
     this._user = userData;
   }
 
-  signOut(): void {
-    this.authService.signOut();
-    this.router.navigate(["/", "auth"]);
-    console.log(this._user);
+  signOut(): Observable<any> {
+    return from(this.angularFire.signOut());
   }
 }

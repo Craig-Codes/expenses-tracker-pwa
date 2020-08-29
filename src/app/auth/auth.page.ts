@@ -1,14 +1,11 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, NgZone } from "@angular/core";
 
-import { SocialAuthService } from "angularx-social-login";
-
-import {
-  GoogleLoginProvider,
-  FacebookLoginProvider,
-  AmazonLoginProvider,
-} from "angularx-social-login";
 import { UserService } from "../user.service";
 import { Router } from "@angular/router";
+
+import { AngularFireAuth } from "@angular/fire/auth";
+import { FirebaseAuthService } from "../auth/firebase-auth.service";
+import { Subscription } from "rxjs/internal/Subscription";
 
 @Component({
   selector: "app-auth",
@@ -16,34 +13,101 @@ import { Router } from "@angular/router";
   styleUrls: ["./auth.page.scss"],
 })
 export class AuthPage implements OnInit {
+  // signInForm: FormGroup;
+  submitError: string;
+  authRedirectResult: Subscription;
   constructor(
-    private authService: SocialAuthService,
+    private ngZone: NgZone,
     private userService: UserService,
-    private router: Router
-  ) {}
+    private router: Router,
+    public angularFire: AngularFireAuth,
+    private authService: FirebaseAuthService
+  ) {
+    // Get firebase authentication redirect result invoken when using signInWithRedirect()
+    // signInWithRedirect() is only used when client is in web but not desktop
+    this.authRedirectResult = this.authService
+      .getRedirectResult()
+      .subscribe((result) => {
+        this.userService.user = result;
+        if (this.userService.user) {
+          this.userService.loggedIn = true;
+          this.redirectLoggedUserToProfilePage();
+        } else if (result.error) {
+          this.submitError = result.error;
+        }
+      });
+  }
 
-  ngOnInit() {
-    this.authService.authState.subscribe((user) => {
-      this.userService.user = user;
-      this.userService.loggedIn = user != null;
-      // evaluates the expression, so if user isn't null it returns true (loggedIn = true), if user is null it returns false
-      console.log(this.userService.loggedIn);
-      console.log(this.userService.user);
-      if (this.userService.loggedIn === true) {
-        this.router.navigate(["/", "trips", "tabs", "all-trips"]); ///trips/tabs/all-trips
-      }
+  // Once the auth provider finished the authentication flow, and the auth redirect completes,
+  // redirect the user to the profile page
+  redirectLoggedUserToProfilePage() {
+    // As we are calling the Angular router navigation inside a subscribe method, the navigation will be triggered outside Angular zone.
+    // That's why we need to wrap the router navigation call inside an ngZone wrapper
+    this.ngZone.run(() => {
+      this.router.navigate(["trips/tabs/all-trips"]);
     });
   }
 
-  signInWithGoogle(): void {
-    this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
+  ngOnInit() {}
+
+  signInWithGoogle() {
+    this.authService
+      .signInWithGoogle()
+      .then((result: any) => {
+        if (result.additionalUserInfo) {
+          this.authService.setProviderAdditionalInfo(
+            result.additionalUserInfo.profile
+          );
+        }
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        // const token = result.credential.accessToken;
+        // The signed-in user info is in result.user;
+        this.redirectLoggedUserToProfilePage();
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        console.log(error);
+      });
   }
 
-  signInWithFB(): void {
-    this.authService.signIn(FacebookLoginProvider.PROVIDER_ID);
+  signInWithFB() {
+    this.authService
+      .signInWithFacebook()
+      .then((result: any) => {
+        if (result.additionalUserInfo) {
+          // to get all the sign in provider's information
+          this.authService.setProviderAdditionalInfo(
+            result.additionalUserInfo.profile
+          );
+        }
+        // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+        // const token = result.credential.accessToken;
+        // The signed-in user info is in result.user;
+        this.redirectLoggedUserToProfilePage();
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        console.log(error);
+      });
   }
 
-  signInWithAmazon(): void {
-    this.authService.signIn(AmazonLoginProvider.PROVIDER_ID);
+  signInWithAmazon() {
+    this.authService
+      .signInWithTwitter()
+      .then((result: any) => {
+        if (result.additionalUserInfo) {
+          this.authService.setProviderAdditionalInfo(
+            result.additionalUserInfo.profile
+          );
+        }
+        // This gives you a Twitter Access Token. You can use it to access the Twitter API.
+        // const token = result.credential.accessToken;
+        // The signed-in user info is in result.user;
+        this.redirectLoggedUserToProfilePage();
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        console.log(error);
+      });
   }
 }

@@ -3,6 +3,8 @@ import { Component } from "@angular/core";
 import { Platform } from "@ionic/angular";
 import { Plugins, Capacitor } from "@capacitor/core";
 import { UserService } from "./user.service";
+import { FirebaseAuthService } from "./auth/firebase-auth.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-root",
@@ -10,7 +12,11 @@ import { UserService } from "./user.service";
   styleUrls: ["app.component.scss"],
 })
 export class AppComponent {
-  constructor(private platform: Platform, private userService: UserService) {
+  constructor(
+    private platform: Platform,
+    private firebaseAuthService: FirebaseAuthService,
+    private router: Router
+  ) {
     this.initializeApp();
   }
 
@@ -24,6 +30,14 @@ export class AppComponent {
 
   onLogout() {
     console.log("Pressed");
-    this.userService.signOut();
+    this.firebaseAuthService.signOut().subscribe(
+      () => {
+        // Sign-out successful.
+        this.router.navigate(["/"]);
+      },
+      (error) => {
+        console.log("signout error", error);
+      }
+    );
   }
 }
