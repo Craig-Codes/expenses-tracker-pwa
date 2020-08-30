@@ -2,12 +2,17 @@ import { Injectable, OnInit } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/auth";
 
 import { Router } from "@angular/router";
+import { FirebaseAuthService } from "./auth/firebase-auth.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class UserService implements OnInit {
-  constructor(private router: Router, public angularFire: AngularFireAuth) {}
+  constructor(
+    private router: Router,
+    public angularFire: AngularFireAuth,
+    private firebaseAuthService: FirebaseAuthService
+  ) {}
   private _user: any; // stores the user's login information gained from firebase logon
   loggedIn: boolean = false;
 
@@ -26,8 +31,12 @@ export class UserService implements OnInit {
   signOut() {
     console.log("hit sign-out");
     this.user = null;
+    this.firebaseAuthService.currentUser = null;
     this.loggedIn = false;
-    console.log("logged in====", this.loggedIn);
+    console.log(
+      "current user at logout ======",
+      this.firebaseAuthService.currentUser
+    );
     this.router.navigate(["auth"]);
   }
 }
