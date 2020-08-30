@@ -7,6 +7,9 @@ import { AngularFireAuth } from "@angular/fire/auth";
 import { FirebaseAuthService } from "../auth/firebase-auth.service";
 import { Subscription } from "rxjs/internal/Subscription";
 
+import { cfaSignIn } from "capacitor-firebase-auth";
+import { User } from "firebase";
+
 @Component({
   selector: "app-auth",
   templateUrl: "./auth.page.html",
@@ -137,5 +140,19 @@ export class AuthPage implements OnInit {
         // Handle Errors here.
         console.log(error);
       });
+  }
+
+  signInWithGoogleNative() {
+    console.log("native sign in try");
+    cfaSignIn("google.com").subscribe((user: User) => {
+      console.log(user.displayName);
+      this.authService.currentUser = user;
+      console.log(this.authService.currentUser);
+      if (this.authService.currentUser) {
+        this.userService.loggedIn = true;
+        console.log("user is real, proceed");
+        this.router.navigate(["/trips/tabs/all-trips"]);
+      }
+    });
   }
 }
