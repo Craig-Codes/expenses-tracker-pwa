@@ -12,11 +12,9 @@ import { Router } from "@angular/router";
   styleUrls: ["app.component.scss"],
 })
 export class AppComponent {
-  constructor(
-    private platform: Platform,
-    private firebaseAuthService: FirebaseAuthService,
-    private router: Router
-  ) {
+  isLoading = false;
+
+  constructor(private platform: Platform, private userService: UserService) {
     this.initializeApp();
   }
 
@@ -29,15 +27,6 @@ export class AppComponent {
   }
 
   onLogout() {
-    console.log("Pressed");
-    this.firebaseAuthService.signOut().subscribe(
-      () => {
-        // Sign-out successful.
-        this.router.navigate(["/"]);
-      },
-      (error) => {
-        console.log("signout error", error);
-      }
-    );
+    this.userService.signOut();
   }
 }

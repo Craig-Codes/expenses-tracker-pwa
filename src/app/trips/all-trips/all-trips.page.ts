@@ -3,6 +3,8 @@ import { SegmentChangeEventDetail } from "@ionic/core";
 import { DataService } from "../../data.service";
 import { Trip } from "../../models/trip.model";
 import { Subscription } from "rxjs";
+import { UserService } from "src/app/user.service";
+import { FirebaseAuthService } from "src/app/auth/firebase-auth.service";
 
 @Component({
   selector: "app-all-trips",
@@ -10,7 +12,11 @@ import { Subscription } from "rxjs";
   styleUrls: ["./all-trips.page.scss"],
 })
 export class AllTripsPage implements OnInit, OnDestroy {
-  constructor(private dataService: DataService) {}
+  constructor(
+    private dataService: DataService,
+    private userService: UserService,
+    private firebaseAuthService: FirebaseAuthService
+  ) {}
   retrievedTrips: Trip[];
   orderedTrips: Trip[];
   private tabsValue = "cost";
@@ -42,9 +48,9 @@ export class AllTripsPage implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     console.log("entering view");
-    // this.placesService.fetchPlaces().subscribe(() => { // will subscribe to changes
-    //   this.isLoading = false;
-    // });
+    // console.log(this.userService.user.user.email);
+    // console.log(this.userService.user);
+    console.log("firebase user", this.firebaseAuthService.currentUser);
   }
 
   onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {

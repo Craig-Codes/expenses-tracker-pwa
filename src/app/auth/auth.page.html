@@ -1,6 +1,11 @@
 <ion-content class="background vertical-align-content">
   <ion-grid>
-    <ion-row class="row">
+    <ion-row *ngIf="redirectSpinner">
+      <ion-col>
+        <ion-spinner color="primary"></ion-spinner>
+      </ion-col>
+    </ion-row>
+    <ion-row class="row" *ngIf="!redirectSpinner">
       <ion-col class="ion-text-center ion-align-items-center">
         <ion-card>
           <h1>Expenses Tracker</h1>
@@ -32,11 +37,22 @@
             <ion-button
               fill="outline"
               type="button"
-              (click)="signInWithAmazon()"
+              (click)="signInWithTwitter()"
               color="tertiary"
             >
-              <ion-icon name="logo-amazon" slot="start"> </ion-icon>
-              Amazon
+              <ion-icon name="logo-twitter" slot="start"></ion-icon>
+              Twitter
+            </ion-button>
+          </ion-buttons>
+          <ion-buttons class="ion-justify-content-center">
+            <ion-button
+              fill="outline"
+              type="button"
+              (click)="signInWithGithub()"
+              color="tertiary"
+            >
+              <ion-icon name="logo-github" slot="start"></ion-icon>
+              GitHub
             </ion-button>
           </ion-buttons>
         </ion-card>

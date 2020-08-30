@@ -16,6 +16,8 @@ export class AuthPage implements OnInit {
   // signInForm: FormGroup;
   submitError: string;
   authRedirectResult: Subscription;
+  redirectSpinner: boolean = true;
+
   constructor(
     private ngZone: NgZone,
     private userService: UserService,
@@ -48,7 +50,13 @@ export class AuthPage implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    setTimeout(() => {
+      this.redirectSpinner = false;
+    }, 3000);
+  }
+
+  ionViewWillEnter() {}
 
   signInWithGoogle() {
     this.authService
@@ -91,9 +99,29 @@ export class AuthPage implements OnInit {
       });
   }
 
-  signInWithAmazon() {
+  signInWithTwitter() {
     this.authService
       .signInWithTwitter()
+      .then((result: any) => {
+        if (result.additionalUserInfo) {
+          this.authService.setProviderAdditionalInfo(
+            result.additionalUserInfo.profile
+          );
+        }
+        // This gives you a Twitter Access Token. You can use it to access the Twitter API.
+        // const token = result.credential.accessToken;
+        // The signed-in user info is in result.user;
+        this.redirectLoggedUserToProfilePage();
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        console.log(error);
+      });
+  }
+
+  signInWithGithub() {
+    this.authService
+      .signInWithGithub()
       .then((result: any) => {
         if (result.additionalUserInfo) {
           this.authService.setProviderAdditionalInfo(

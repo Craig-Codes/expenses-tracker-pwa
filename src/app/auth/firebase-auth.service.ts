@@ -10,18 +10,15 @@ export class FirebaseAuthService {
   currentUser: User;
   userProviderAdditionalInfo: any;
   redirectResult: Subject<any> = new Subject<any>();
-  isLoggedIn = false;
 
   constructor(public angularFire: AngularFireAuth, public platform: Platform) {
     this.angularFire.onAuthStateChanged((user) => {
       if (user) {
         // User is signed in.
         this.currentUser = user;
-        this.isLoggedIn = true;
       } else {
         // No user is signed in.
         this.currentUser = null;
-        this.isLoggedIn = false;
       }
     });
 
@@ -97,12 +94,6 @@ export class FirebaseAuthService {
     return this.currentUser;
   }
 
-  signOut(): Observable<any> {
-    console.log("hit sign out in firebase auth");
-    this.isLoggedIn = false;
-    return from(this.angularFire.signOut());
-  }
-
   signInWithEmail(
     email: string,
     password: string
@@ -149,6 +140,11 @@ export class FirebaseAuthService {
 
   signInWithTwitter() {
     const provider = new auth.TwitterAuthProvider();
+    return this.socialSignIn(provider.providerId);
+  }
+
+  signInWithGithub() {
+    const provider = new auth.GithubAuthProvider();
     return this.socialSignIn(provider.providerId);
   }
 }
