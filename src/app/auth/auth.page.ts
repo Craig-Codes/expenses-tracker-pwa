@@ -19,7 +19,7 @@ export class AuthPage implements OnInit {
   // signInForm: FormGroup;
   submitError: string;
   authRedirectResult: Subscription;
-  redirectSpinner: boolean = true;
+  // redirectSpinner: boolean = true;
 
   constructor(
     private ngZone: NgZone,
@@ -54,9 +54,9 @@ export class AuthPage implements OnInit {
   }
 
   ngOnInit() {
-    setTimeout(() => {
-      this.redirectSpinner = false;
-    }, 3000);
+    // setTimeout(() => {
+    //   this.redirectSpinner = false;
+    // }, 3000);
   }
 
   ionViewWillEnter() {}
