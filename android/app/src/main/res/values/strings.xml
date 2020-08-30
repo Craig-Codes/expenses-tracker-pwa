@@ -4,4 +4,7 @@
     <string name="title_activity_main">Expenses Tracker App</string>
     <string name="package_name">com.craigadam.expensestracker</string>
     <string name="custom_url_scheme">com.craigadam.expensestracker</string>
+    <string name="facebook_app_id">298990371200930</string>
+<string name="fb_login_protocol_scheme">fb298990371200930</string>
+
 </resources>

@@ -122,25 +122,26 @@ export class AuthPage implements OnInit {
       });
   }
 
-  signInWithGithub() {
-    this.authService
-      .signInWithGithub()
-      .then((result: any) => {
-        if (result.additionalUserInfo) {
-          this.authService.setProviderAdditionalInfo(
-            result.additionalUserInfo.profile
-          );
-        }
-        // This gives you a Twitter Access Token. You can use it to access the Twitter API.
-        // const token = result.credential.accessToken;
-        // The signed-in user info is in result.user;
-        this.redirectLoggedUserToProfilePage();
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        console.log(error);
-      });
-  }
+  // GitHub not supported by native oAuth sign in package
+  // signInWithGithub() {
+  //   this.authService
+  //     .signInWithGithub()
+  //     .then((result: any) => {
+  //       if (result.additionalUserInfo) {
+  //         this.authService.setProviderAdditionalInfo(
+  //           result.additionalUserInfo.profile
+  //         );
+  //       }
+  //       // This gives you a Twitter Access Token. You can use it to access the Twitter API.
+  //       // const token = result.credential.accessToken;
+  //       // The signed-in user info is in result.user;
+  //       this.redirectLoggedUserToProfilePage();
+  //     })
+  //     .catch((error) => {
+  //       // Handle Errors here.
+  //       console.log(error);
+  //     });
+  // }
 
   signInWithGoogleNative() {
     console.log("native sign in try");
@@ -155,4 +156,47 @@ export class AuthPage implements OnInit {
       }
     });
   }
+
+  signInWithFacebookNative() {
+    console.log("native sign in try");
+    cfaSignIn("facebook.com").subscribe((user: User) => {
+      console.log(user.displayName);
+      this.authService.currentUser = user;
+      console.log(this.authService.currentUser);
+      if (this.authService.currentUser) {
+        this.userService.loggedIn = true;
+        console.log("user is real, proceed");
+        this.router.navigate(["/trips/tabs/all-trips"]);
+      }
+    });
+  }
+
+  signInWithTwitterNative() {
+    console.log("native sign in try");
+    cfaSignIn("twitter.com").subscribe((user: User) => {
+      console.log(user.displayName);
+      this.authService.currentUser = user;
+      console.log(this.authService.currentUser);
+      if (this.authService.currentUser) {
+        this.userService.loggedIn = true;
+        console.log("user is real, proceed");
+        this.router.navigate(["/trips/tabs/all-trips"]);
+      }
+    });
+  }
+
+  // GitHub not supported by native sign in library
+  // signInWithGithubNative() {
+  //   console.log("native sign in try");
+  //   cfaSignIn("github.com").subscribe((user: User) => {
+  //     console.log(user.displayName);
+  //     this.authService.currentUser = user;
+  //     console.log(this.authService.currentUser);
+  //     if (this.authService.currentUser) {
+  //       this.userService.loggedIn = true;
+  //       console.log("user is real, proceed");
+  //       this.router.navigate(["/trips/tabs/all-trips"]);
+  //     }
+  //   });
+  // }
 }
