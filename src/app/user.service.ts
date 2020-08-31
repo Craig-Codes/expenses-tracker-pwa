@@ -3,6 +3,7 @@ import { AngularFireAuth } from "@angular/fire/auth";
 
 import { Router } from "@angular/router";
 import { FirebaseAuthService } from "./auth/firebase-auth.service";
+import { cfaSignOut } from "capacitor-firebase-auth";
 
 @Injectable({
   providedIn: "root",
@@ -30,13 +31,20 @@ export class UserService implements OnInit {
 
   signOut() {
     console.log("hit sign-out");
-    this.user = null;
-    this.firebaseAuthService.currentUser = null;
-    this.loggedIn = false;
-    console.log(
-      "current user at logout ======",
-      this.firebaseAuthService.currentUser
-    );
-    this.router.navigate(["auth"]);
+    // this.user = null;
+    // this.firebaseAuthService.currentUser = null;
+    // this.loggedIn = false;
+    // console.log(
+    //   "current user at logout ======",
+    //   this.firebaseAuthService.currentUser
+    // );
+    // this.router.navigate(["auth"]);
+
+    cfaSignOut().subscribe(() => {
+      this.user = null;
+      this.firebaseAuthService.currentUser = null;
+      this.loggedIn = false;
+      this.router.navigate(["auth"]);
+    });
   }
 }

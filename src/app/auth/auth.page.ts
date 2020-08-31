@@ -9,6 +9,7 @@ import { Subscription } from "rxjs/internal/Subscription";
 
 import { cfaSignIn } from "capacitor-firebase-auth";
 import { User } from "firebase";
+import { Platform } from "@ionic/angular";
 
 @Component({
   selector: "app-auth",
@@ -26,7 +27,8 @@ export class AuthPage implements OnInit {
     private userService: UserService,
     private router: Router,
     public angularFire: AngularFireAuth,
-    private authService: FirebaseAuthService
+    private authService: FirebaseAuthService,
+    private platform: Platform
   ) {
     // Get firebase authentication redirect result invoken when using signInWithRedirect()
     // signInWithRedirect() is only used when client is in web but not desktop
@@ -54,6 +56,13 @@ export class AuthPage implements OnInit {
   }
 
   ngOnInit() {
+    console.log("Mobile:", this.platform.is("mobile"));
+    console.log("Hybrid:", this.platform.is("hybrid"));
+    console.log("iOS:", this.platform.is("ios"));
+    console.log("Android:", this.platform.is("android"));
+    console.log("Desktop:", this.platform.is("desktop"));
+    console.log("core:", this.platform.is("core"));
+
     // setTimeout(() => {
     //   this.redirectSpinner = false;
     // }, 3000);
