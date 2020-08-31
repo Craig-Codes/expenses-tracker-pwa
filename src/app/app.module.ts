@@ -10,9 +10,9 @@ import { AppComponent } from "./app.component";
 import { AppRoutingModule } from "./app-routing.module";
 
 import { AngularFireModule } from "@angular/fire";
+// angular fire is required to interact with google firebase authentication services to allow social logon
 import { AngularFireAuthModule } from "@angular/fire/auth";
 import { environment } from "../environments/environment";
-import { FirebaseAuthService } from "../app/auth/firebase-auth.service";
 
 @NgModule({
   declarations: [AppComponent],
@@ -27,8 +27,6 @@ import { FirebaseAuthService } from "../app/auth/firebase-auth.service";
   providers: [
     StatusBar,
     SplashScreen,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    FirebaseAuthService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
   ],
   bootstrap: [AppComponent],

@@ -1,10 +1,9 @@
-import { Component, OnInit, Input, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { SegmentChangeEventDetail } from "@ionic/core";
 import { DataService } from "../../data.service";
 import { Trip } from "../../models/trip.model";
 import { Subscription } from "rxjs";
 import { UserService } from "src/app/user.service";
-import { FirebaseAuthService } from "src/app/auth/firebase-auth.service";
 
 @Component({
   selector: "app-all-trips",
@@ -14,8 +13,7 @@ import { FirebaseAuthService } from "src/app/auth/firebase-auth.service";
 export class AllTripsPage implements OnInit, OnDestroy {
   constructor(
     private dataService: DataService,
-    private userService: UserService,
-    private firebaseAuthService: FirebaseAuthService
+    private userService: UserService
   ) {}
   retrievedTrips: Trip[];
   orderedTrips: Trip[];
@@ -50,7 +48,7 @@ export class AllTripsPage implements OnInit, OnDestroy {
     console.log("entering view");
     // console.log(this.userService.user.user.email);
     // console.log(this.userService.user);
-    console.log("firebase user", this.firebaseAuthService.currentUser);
+    console.log("firebase user", this.userService.user);
   }
 
   onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {
