@@ -4,7 +4,7 @@ import { UserService } from "../user.service";
 import { Router } from "@angular/router";
 
 import { AngularFireAuth } from "@angular/fire/auth";
-import { FirebaseAuthService } from "../auth/firebase-auth.service";
+import { FirebaseAuthService } from "../../app/auth/firebase-auth.service";
 import { Subscription } from "rxjs/internal/Subscription";
 
 import { cfaSignIn } from "capacitor-firebase-auth";
@@ -56,13 +56,12 @@ export class AuthPage implements OnInit {
   }
 
   ngOnInit() {
-    console.log("Mobile:", this.platform.is("mobile"));
-    console.log("Hybrid:", this.platform.is("hybrid"));
-    console.log("iOS:", this.platform.is("ios"));
-    console.log("Android:", this.platform.is("android"));
-    console.log("Desktop:", this.platform.is("desktop"));
-    console.log("core:", this.platform.is("core"));
-
+    // console.log("Mobile:", this.platform.is("mobile"));
+    // console.log("Hybrid:", this.platform.is("hybrid"));
+    // console.log("iOS:", this.platform.is("ios"));
+    // console.log("Android:", this.platform.is("android"));
+    // console.log("Desktop:", this.platform.is("desktop"));
+    // console.log("core:", this.platform.is("core"));
     // setTimeout(() => {
     //   this.redirectSpinner = false;
     // }, 3000);
