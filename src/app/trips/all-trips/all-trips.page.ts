@@ -18,6 +18,7 @@ export class AllTripsPage implements OnInit, OnDestroy {
   retrievedTrips: Trip[];
   orderedTrips: Trip[];
   private tabsValue = "cost";
+  userPhoto: string;
 
   totalToClaim: number;
 
@@ -27,6 +28,7 @@ export class AllTripsPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     // start with relevant trips being ordered by Date
+    this.userPhoto = this.userService.user.photoURL;
     this.tripsSubscription = this.dataService.trips.subscribe((tripsArray) => {
       this.isLoading = true; // add a loading spinner
       setTimeout(() => {

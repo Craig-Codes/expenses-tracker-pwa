@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { SegmentChangeEventDetail } from "@ionic/core";
+import { UserService } from "src/app/user.service";
 
 @Component({
   selector: "app-recipts",
@@ -7,9 +8,12 @@ import { SegmentChangeEventDetail } from "@ionic/core";
   styleUrls: ["./recipts.page.scss"],
 })
 export class ReciptsPage implements OnInit {
-  constructor() {}
+  userPhoto: string;
+  constructor(private userService: UserService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.userPhoto = this.userService.user.photoURL;
+  }
 
   onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {
     if (event.detail.value === "recent") {

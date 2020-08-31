@@ -3,7 +3,12 @@
     <ion-buttons slot="start">
       <ion-menu-button menu="m1"></ion-menu-button>
     </ion-buttons>
-    <ion-title>Trips</ion-title>
+    <ion-item color="secondary">
+      <ion-avatar class="beforeTitle">
+        <img src="{{userPhoto}}" />
+      </ion-avatar>
+      <ion-title>Trips</ion-title>
+    </ion-item>
     <ion-buttons slot="primary">
       <ion-button routerLink="/places/tabs/offers/new">
         <ion-icon name="add" slot="icon-only"></ion-icon>
