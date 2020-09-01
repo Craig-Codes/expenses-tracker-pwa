@@ -91,19 +91,24 @@ export class AllTripsPage implements OnInit, OnDestroy {
   }
 
   onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {
-    console.log("filtering");
-    if (event.detail.value === "recent") {
-      this.orderedTrips.sort((a, b) => {
-        if (a.dateFrom < b.dateFrom) return 1;
-        if (a.dateFrom > b.dateFrom) return -1;
-        return 0;
-      });
-    } else {
-      this.orderedTrips.sort((a, b) => {
-        if (a.price < b.price) return 1;
-        if (a.price > b.price) return -1;
-        return 0;
-      });
+    try {
+      console.log("filtering");
+      if (event.detail.value === "recent") {
+        this.orderedTrips.sort((a, b) => {
+          if (a.dateFrom < b.dateFrom) return 1;
+          if (a.dateFrom > b.dateFrom) return -1;
+          return 0;
+        });
+      } else {
+        this.orderedTrips.sort((a, b) => {
+          if (a.price < b.price) return 1;
+          if (a.price > b.price) return -1;
+          return 0;
+        });
+      }
+    } catch {
+      // if no trips then we dont want to sort. Catch the error
+      console.log("no trips to sort");
     }
   }
 
