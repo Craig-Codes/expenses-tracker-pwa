@@ -4,6 +4,8 @@ import { DataService } from "../../data.service";
 import { Trip } from "../../models/trip.model";
 import { Subscription } from "rxjs";
 import { UserService } from "src/app/user.service";
+import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { AbstractFormGroupDirective } from "@angular/forms";
 
 @Component({
   selector: "app-all-trips",
@@ -13,7 +15,8 @@ import { UserService } from "src/app/user.service";
 export class AllTripsPage implements OnInit, OnDestroy {
   constructor(
     private dataService: DataService,
-    private userService: UserService
+    private userService: UserService,
+    private http: HttpClient
   ) {}
   retrievedTrips: Trip[];
   orderedTrips: Trip[];
@@ -43,6 +46,28 @@ export class AllTripsPage implements OnInit, OnDestroy {
         this.calculateTotal(tripsArray);
         this.isLoading = false; // once all tasks are complete, remove the loading spinner
       }, 2000);
+      // Retreive data from database via REST api
+      // console.log(this.userService.user.email);
+      let params = new HttpParams().set("user", this.userService.user.email);
+      this.http
+        .get(`http://localhost:3000/trips`, { params })
+        .subscribe((returnedTrips) => {
+          console.log(returnedTrips);
+
+          // trips.forEach((trip) => {
+          //   console.log(trip);
+          //   let newTrip = new Trip(
+          //     trip.user,
+          //     trip.tripId,
+          //     trip.location,
+          //     trip.description,
+          //     trip.dateFrom,
+          //     trip.dateTo,
+          //     trip.price
+          //   );
+          //   console.log(newTrip);
+          // });
+        });
     });
   }
 
