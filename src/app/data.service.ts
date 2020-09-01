@@ -14,33 +14,33 @@ export class DataService {
 
   // will hold an array of all fetched trips for a user from the db
   private _trips = new BehaviorSubject<Trip[]>([
-    new Trip(
-      "craig_adam2k@hotmail.com",
-      "lax20200312",
-      "los Angeles",
-      "best RAF course ever!!!!",
-      new Date("2015-03-20"),
-      new Date(),
-      100
-    ),
-    new Trip(
-      "craigadam1987@gmail.com",
-      "jpn20200312",
-      "Japan",
-      "International Relations Exercise",
-      new Date("2015-03-25"),
-      new Date(),
-      400
-    ),
-    new Trip(
-      "craig_adam2k@hotmail.com",
-      "rky20200312",
-      "Iceland",
-      "Satcomms course",
-      new Date("2015-03-26"),
-      new Date(),
-      200
-    ),
+    // new Trip(
+    //   "craig_adam2k@hotmail.com",
+    //   "lax20200312",
+    //   "los Angeles",
+    //   "best RAF course ever!!!!",
+    //   new Date("2015-03-20"),
+    //   new Date(),
+    //   100
+    // ),
+    // new Trip(
+    //   "craigadam1987@gmail.com",
+    //   "jpn20200312",
+    //   "Japan",
+    //   "International Relations Exercise",
+    //   new Date("2015-03-25"),
+    //   new Date(),
+    //   400
+    // ),
+    // new Trip(
+    //   "craig_adam2k@hotmail.com",
+    //   "rky20200312",
+    //   "Iceland",
+    //   "Satcomms course",
+    //   new Date("2015-03-26"),
+    //   new Date(),
+    //   200
+    // ),
   ]);
 
   get trips() {
@@ -50,9 +50,10 @@ export class DataService {
   // will hold an array of all the fetches recipts for a user from db
   private _recipts: Receipt[];
 
-  getTrips() {
+  getInitialTrips(initialTrips: Trip[]) {
     // would fetch trips from the server... based on user email address
-    return this._trips;
+    this._trips.next(initialTrips);
+    //return this._trips;
   }
 
   getRecipts() {
