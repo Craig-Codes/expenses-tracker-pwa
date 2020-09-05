@@ -56,7 +56,6 @@ export class AllTripsPage implements OnInit, OnDestroy {
     this.http
       .get<any[]>(`http://localhost:3000/trips`, { params })
       .subscribe((returnedTrips) => {
-        console.log("returnedTrips ======", this.retrievedTrips);
         if (returnedTrips.length === 0) {
           // if array is empty, no trips were returned so we have no starting trips for this user
           this.noTripsFound = true; // add a message to let user know to create a trip to store reciepts as most likely a new user
@@ -64,7 +63,6 @@ export class AllTripsPage implements OnInit, OnDestroy {
           return;
         } else {
           const usersTripArray: Trip[] = [];
-          console.log(returnedTrips);
           returnedTrips.forEach((trip) => {
             console.log(trip);
             let createdTrip = new Trip(
@@ -83,12 +81,7 @@ export class AllTripsPage implements OnInit, OnDestroy {
       });
   }
 
-  ionViewWillEnter() {
-    console.log("entering view");
-    // console.log(this.userService.user.user.email);
-    // console.log(this.userService.user);
-    console.log("firebase user", this.userService.user);
-  }
+  ionViewWillEnter() {}
 
   onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {
     try {
@@ -114,14 +107,13 @@ export class AllTripsPage implements OnInit, OnDestroy {
 
   onFilterLoad(value: string) {
     if (value === "recent") {
-      console.log("most recent");
       this.orderedTrips.sort((a, b) => {
+        // https://masteringjs.io/tutorials/fundamentals/compare-dates - read this if dates not working correctly
         if (a.dateFrom < b.dateFrom) return 1;
         if (a.dateFrom > b.dateFrom) return -1;
         return 0;
       });
     } else {
-      console.log("cost");
       this.orderedTrips.sort((a, b) => {
         if (a.price < b.price) return 1;
         if (a.price > b.price) return -1;
@@ -147,7 +139,6 @@ export class AllTripsPage implements OnInit, OnDestroy {
   calculateTotal(trips: Trip[]) {
     this.totalToClaim = 0;
     trips.forEach((trip) => {
-      console.log(trip);
       this.totalToClaim += trip.price;
     });
   }

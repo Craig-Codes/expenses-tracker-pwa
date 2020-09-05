@@ -3,63 +3,32 @@ import { Trip } from "../app/models/trip.model";
 import { Receipt } from "../app/models/recipt.model";
 import { UserService } from "./user.service";
 import { BehaviorSubject } from "rxjs";
-import { map } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root",
 })
 export class DataService {
   constructor(private userService: UserService) {}
-  // userService injected to get user user email - used in the API calls this.userservice.user.email = users logged in email addess
 
-  // will hold an array of all fetched trips for a user from the db
-  private _trips = new BehaviorSubject<Trip[]>([
-    // new Trip(
-    //   "craig_adam2k@hotmail.com",
-    //   "lax20200312",
-    //   "los Angeles",
-    //   "best RAF course ever!!!!",
-    //   new Date("2015-03-20"),
-    //   new Date(),
-    //   100
-    // ),
-    // new Trip(
-    //   "craigadam1987@gmail.com",
-    //   "jpn20200312",
-    //   "Japan",
-    //   "International Relations Exercise",
-    //   new Date("2015-03-25"),
-    //   new Date(),
-    //   400
-    // ),
-    // new Trip(
-    //   "craig_adam2k@hotmail.com",
-    //   "rky20200312",
-    //   "Iceland",
-    //   "Satcomms course",
-    //   new Date("2015-03-26"),
-    //   new Date(),
-    //   200
-    // ),
-  ]);
+  private _trips = new BehaviorSubject<Trip[]>([]);
+  // array of all trips for that user. Initial value is gained from all-trips.page.ts onLoad
+  // via a http request to the REST api (node.js server).
+  // BehaviourSubject ensures that any page which subscribes to this observable gets the current value until another value is emitted.
 
   get trips() {
-    return this._trips.asObservable(); // can now be subscribed to from other componenets
+    return this._trips.asObservable();
+    // trips can now be subscribed to from other components. This works well as any subscription will be emitted with the most
+    // upto date value, which it can then be stored directly in the component which needs it. We never need to access the current
+    // Trips array directly, as this value may not be updated like an observable will
   }
 
-  // will hold an array of all the fetches recipts for a user from db
-  private _recipts: Receipt[];
-
+  // trips fetched from the server are sent here to be emitted to _trips so that the data is updated across the application
   getInitialTrips(initialTrips: Trip[]) {
-    // would fetch trips from the server... based on user email address
     this._trips.next(initialTrips);
-    //return this._trips;
   }
 
-  getRecipts() {
-    return this._recipts;
-  }
-
+  // Update the trips array, emitting the new value to all subscribers.
+  // SEND NEW TRIP TO THE SERVER!!!
   updateTrip(
     user: string,
     tripId: string,
@@ -79,10 +48,16 @@ export class DataService {
       dateTo,
       price
     );
-    // emit a value on the this._trips event emitter
     // get the current value of this._trips and add the newTrip onto it, creating a new value to emit
     this._trips.next(this._trips.getValue().concat(newTrip));
-    // this._trips Trip array is now emitted out to all subscribers (the all-trips.page) to update the page automatically
+    // this._trips Trip array is now emitted out to all subscribers to update the page automatically
     // SEND THE UPDATED TRIP ARRAY TO THE BACKEND FOR SERVER STORAGE!!
+  }
+
+  // will hold an array of all the fetches reciepts for a user from database
+  private _recipts: Receipt[];
+
+  getRecipts() {
+    return this._recipts;
   }
 }
