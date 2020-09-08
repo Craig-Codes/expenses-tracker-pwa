@@ -4,7 +4,7 @@ import { Trip } from "src/app/models/trip.model";
 import { DataService } from "src/app/data.service";
 import { Subscription } from "rxjs";
 import { map } from "rxjs/operators";
-import { NavController } from "@ionic/angular";
+import { NavController, AlertController } from "@ionic/angular";
 import {
   FormGroup,
   FormControl,
@@ -29,7 +29,8 @@ export class TripEditPage implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private dataService: DataService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private alertCtrl: AlertController
   ) {}
 
   ngOnInit() {
@@ -97,6 +98,33 @@ export class TripEditPage implements OnInit, OnDestroy {
     this.tripToEdit[0].dateTo = new Date(this.form.value.dateTo);
     // send updated trip to the dataService to update the _trips array and emit to all subscribed components
     this.dataService.editTrip(this.tripToEdit[0]);
+  }
+
+  onDeleteTrip() {
+    // modal - allows user to check they really want to delete the trip
+    this.alertCtrl
+      .create({
+        header: "Delete trip?",
+        message:
+          "Are you sure? Deleting the trip will remove all associated receipts and cannot be undone.",
+        buttons: [
+          {
+            text: "Okay",
+            handler: () => {
+              this.dataService.deleteTrip(this.tripId);
+            },
+          },
+          {
+            text: "Cancel",
+            handler: () => {
+              console.log("cancelled delete");
+            },
+          },
+        ],
+      })
+      .then((alertEl) => {
+        alertEl.present();
+      });
   }
 
   ngOnDestroy() {

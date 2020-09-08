@@ -41,7 +41,7 @@ export class DataService {
         this.getInitialTrips(usersTripArray);
       });
 
-    // Get Recipts
+    // Get Receipts
     this.http
       .get<any[]>(`${this.baseUrl}receipts`, { params })
       .subscribe((returnedReciepts) => {
@@ -139,6 +139,39 @@ export class DataService {
     let params = new HttpParams({ fromObject: putData });
     this.http.put<any[]>(`${this.baseUrl}trips`, params).subscribe();
     this.router.navigate(["/trips/tabs/all-trips"]);
+  }
+
+  deleteTrip(tripId: string) {
+    console.log("trip deleted");
+    // Delete the Trip from the local app
+    const newTripsArray: Trip[] = [];
+    const currentTrips = this._trips.getValue();
+    currentTrips.forEach((trip) => {
+      // Create a new array, only pushing in objects whose Id's do not match the passed in tripId parameter
+      if (trip.tripId !== tripId) {
+        newTripsArray.push(trip);
+      }
+    });
+    this._trips.next(newTripsArray); // emit the newTripsArray, passing the application an array without the item to be deleted
+    // Create a new array, only pushing the receipts whose id's do not match the passed tripId parameter
+    const newReceiptsArray: Receipt[] = [];
+    const currentReceipts = this._reciepts.getValue();
+    currentReceipts.forEach((receipt) => {
+      // Create a new array, only pushing in objects whose Id's do not match the passed in tripId parameter
+      if (receipt.tripId !== tripId) {
+        newReceiptsArray.push(receipt);
+      }
+    });
+    this._reciepts.next(newReceiptsArray); // emit the newTripsArray, passing the application an array without the item to be deleted
+    // Delete the trip and associated receipts from the database
+    const params = new HttpParams().set("tripId", tripId); // pass the current tripId as a parameter
+    this.http
+      .delete<any>(`${this.baseUrl}trips`, { params })
+      .subscribe();
+    // navigate back to all trips page
+    this.router.navigate(["/trips/tabs/all-trips"]);
+
+    // DELETE ALL ASSOCIATED RECEIPTS - BOTH IN APP AND DATABASE!!!
   }
 
   // will hold an array of all the fetched reciepts for a user from database
