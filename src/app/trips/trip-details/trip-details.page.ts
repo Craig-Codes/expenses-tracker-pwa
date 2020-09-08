@@ -5,6 +5,7 @@ import { ActivatedRoute } from "@angular/router";
 import { DataService } from "src/app/data.service";
 import { NavController } from "@ionic/angular";
 import { map } from "rxjs/operators";
+import { Receipt } from "src/app/models/reciept.model";
 
 @Component({
   selector: "app-trip-details",
@@ -14,7 +15,10 @@ import { map } from "rxjs/operators";
 export class TripDetailsPage implements OnInit, OnDestroy {
   tripToEdit: Trip[];
   tripId: string;
+  currentReceipts: Receipt[];
+  noReceiptFound: boolean;
   private tripSubscription: Subscription;
+  private receiptsSubscription: Subscription;
 
   isLoading = false;
 
@@ -47,13 +51,30 @@ export class TripDetailsPage implements OnInit, OnDestroy {
           })
         )
         .subscribe(() => {
-          this.isLoading = false; // we now have the necessary Trip information, remove loading spinner.
+          // we now have the necessary Trip information, remove loading spinner.
         });
     });
+
     // After trips have loaded I then need to fetch all recipts with the trip id and display them here...
+    this.receiptsSubscription = this.dataService.reciepts
+      .pipe(
+        map((receiptsArray) => {
+          this.currentReceipts = receiptsArray.filter((receipt) => {
+            return receipt.tripId === this.tripId;
+          });
+        })
+      )
+      .subscribe(() => {
+        this.isLoading = false;
+      });
   }
 
   ngOnDestroy() {
-    this.tripSubscription.unsubscribe();
+    if (this.receiptsSubscription) {
+      this.receiptsSubscription.unsubscribe();
+    }
+    if (this.tripSubscription) {
+      this.tripSubscription.unsubscribe();
+    }
   }
 }

@@ -1,20 +1,20 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { ReactiveFormsModule } from "@angular/forms";
 
-import { IonicModule } from '@ionic/angular';
+import { IonicModule } from "@ionic/angular";
 
-import { TripNewPageRoutingModule } from './trip-new-routing.module';
+import { TripNewPageRoutingModule } from "./trip-new-routing.module";
 
-import { TripNewPage } from './trip-new.page';
+import { TripNewPage } from "./trip-new.page";
 
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule,
     IonicModule,
-    TripNewPageRoutingModule
+    TripNewPageRoutingModule,
+    ReactiveFormsModule,
   ],
-  declarations: [TripNewPage]
+  declarations: [TripNewPage],
 })
 export class TripNewPageModule {}

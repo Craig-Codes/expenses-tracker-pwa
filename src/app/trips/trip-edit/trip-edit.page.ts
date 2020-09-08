@@ -5,6 +5,12 @@ import { DataService } from "src/app/data.service";
 import { Subscription } from "rxjs";
 import { map } from "rxjs/operators";
 import { NavController } from "@ionic/angular";
+import {
+  FormGroup,
+  FormControl,
+  Validators,
+  ReactiveFormsModule,
+} from "@angular/forms";
 
 @Component({
   selector: "app-trip-edit",
@@ -12,11 +18,13 @@ import { NavController } from "@ionic/angular";
   styleUrls: ["./trip-edit.page.scss"],
 })
 export class TripEditPage implements OnInit, OnDestroy {
-  tripToEdit: Trip[];
+  tripToEdit: Trip[]; // uses the route params to filter the data service trips observable so that only the selected trip is displayed
   tripId: string;
   private tripSubscription: Subscription;
 
   isLoading = false;
+
+  form: FormGroup;
 
   constructor(
     private route: ActivatedRoute,
@@ -50,6 +58,45 @@ export class TripEditPage implements OnInit, OnDestroy {
           this.isLoading = false; // we now have the necessary Trip information, remove loading spinner.
         });
     });
+
+    // create the reactive form
+    this.form = new FormGroup({
+      location: new FormControl(null, {
+        updateOn: "blur",
+        validators: [Validators.required],
+      }),
+      description: new FormControl(null, {
+        updateOn: "blur",
+        validators: [Validators.required, Validators.maxLength(180)],
+      }),
+      dateFrom: new FormControl(null, {
+        updateOn: "blur",
+        validators: [Validators.required],
+      }),
+      dateTo: new FormControl(null, {
+        updateOn: "blur",
+        validators: [Validators.required],
+      }),
+    });
+
+    // pre-populate the form
+    this.form.get("location").setValue(this.tripToEdit[0].location);
+    this.form.get("description").setValue(this.tripToEdit[0].description);
+    this.form.get("dateFrom").setValue(this.tripToEdit[0].dateFrom);
+    this.form.get("dateTo").setValue(this.tripToEdit[0].dateTo);
+  }
+
+  onUpdateTrip() {
+    if (!this.form.valid) {
+      return; // ensure the form is valid
+    }
+    // change the trip values to the ones reflected in the form data
+    this.tripToEdit[0].location = this.form.value.location;
+    this.tripToEdit[0].description = this.form.value.description;
+    this.tripToEdit[0].dateFrom = new Date(this.form.value.dateFrom);
+    this.tripToEdit[0].dateTo = new Date(this.form.value.dateTo);
+    // send updated trip to the dataService to update the _trips array and emit to all subscribed components
+    this.dataService.editTrip(this.tripToEdit[0]);
   }
 
   ngOnDestroy() {

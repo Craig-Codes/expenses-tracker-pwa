@@ -3,6 +3,7 @@ import { Component } from "@angular/core";
 import { Platform } from "@ionic/angular";
 import { Plugins, Capacitor } from "@capacitor/core";
 import { UserService } from "./user.service";
+import { DataService } from "./data.service";
 
 @Component({
   selector: "app-root",

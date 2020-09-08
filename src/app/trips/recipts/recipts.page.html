@@ -51,7 +51,6 @@
     <ion-row>
       <ion-col size="12" size-sm="8" offset-sm="2" class="ion-text-center">
         <ion-item-sliding
-          detail
           *ngFor="let receipt of orderedReciepts"
           approxItemHeight="70px"
         >
@@ -82,6 +81,11 @@
             </ion-item-option>
           </ion-item-options>
         </ion-item-sliding>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12" size-sm="8" offset-sm="2" class="ion-text-center">
+        <p class="info">Slide receipt left to view details, or right to edit</p>
       </ion-col>
     </ion-row>
   </ion-grid>

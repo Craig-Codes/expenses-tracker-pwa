@@ -25,11 +25,10 @@ export class UserService implements OnInit {
   }
 
   signOut() {
-    console.log("hit sign-out");
     cfaSignOut().subscribe(() => {
       this.user = null;
       this.loggedIn = false;
-      this.router.navigate(["auth"]);
+      window.location.replace("/auth");
     });
   }
 }

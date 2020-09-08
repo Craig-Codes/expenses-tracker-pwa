@@ -92,19 +92,6 @@ export class AllTripsPage implements OnInit, OnDestroy {
     }
   }
 
-  updateTest() {
-    console.log("upadte test pressed");
-    this.dataService.newTrip(
-      "craig_adam2k@hotmail.com",
-      "tor20200312",
-      "Toronto",
-      "Messing up the Raptors!",
-      new Date("2010-03-30"),
-      new Date("2018-03-30"),
-      4000
-    );
-  }
-
   // Calculate the total amount owed from all trips - loop through the array and add the total to a variable for output. This method is called each time a trip is updated via subscriptions
   calculateTotal(trips: Trip[]) {
     this.totalToClaim = 0;
