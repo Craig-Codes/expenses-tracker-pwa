@@ -1,8 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
-import { DataService } from "src/app/data.service";
-import { UserService } from "src/app/user.service";
-import { Trip } from "src/app/models/trip.model";
+import { DataService } from "../../data.service";
+import { UserService } from "../../user.service";
+import { Trip } from "../../models/trip.model";
 import { Router } from "@angular/router";
 
 @Component({

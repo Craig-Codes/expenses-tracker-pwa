@@ -1,9 +1,50 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>recipt-new</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button
+        [defaultHref]="['/places/tabs/all-trips']"
+      ></ion-back-button>
+    </ion-buttons>
+    <ion-title>Create Receipt</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button (click)="onAddReceipt()">
+        <ion-icon name="checkmark" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <ion-grid>
+    <form [formGroup]="form">
+      <ion-row>
+        <ion-col size-sm="6" offset-sm="3">
+          <ion-item>
+            <ion-label position="floating">Image</ion-label>
+            <ion-input
+              type="text"
+              autocomplete
+              autocorrect
+              formControlName="image"
+              minlength="3"
+              maxlength="30"
+            ></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size-sm="6" offset-sm="3">
+          <ion-item>
+            <ion-label position="floating">Amount to claim</ion-label>
+            <ion-input
+              type="number"
+              formControlName="price"
+              maxlength="6"
+              minlength="1"
+            ></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </form>
+  </ion-grid>
 </ion-content>

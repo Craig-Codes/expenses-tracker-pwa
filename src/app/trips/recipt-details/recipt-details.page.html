@@ -33,8 +33,11 @@
       <ion-col size="12" size-sm="6" offset-sm="3" class="ion-text-center">
         <ion-card>
           <ion-label>
-            <h5 class="date">
-              {{receiptToEdit[0].timestamp | date: 'dd/MM/yyyy'}}
+            <h5>
+              Timestamp:
+              <span class="date"
+                >{{receiptToEdit[0].timestamp | date: 'medium'}}
+              </span>
             </h5>
             <p class="price">£{{ receiptToEdit[0].price }}</p>
           </ion-label>

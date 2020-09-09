@@ -14,4 +14,12 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content> </ion-content>
+<ion-content>
+  <ion-thumbnail slot="start">
+    <ion-img src="{{ receiptToEdit[0].image }}"></ion-img>
+  </ion-thumbnail>
+  <ion-label>
+    <h5>{{receiptToEdit[0].timestamp | date: 'dd/MM/yyyy'}}</h5>
+    <p class="price">£{{ receiptToEdit[0].price }}</p>
+  </ion-label>
+</ion-content>

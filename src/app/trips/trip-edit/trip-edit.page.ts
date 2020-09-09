@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { Trip } from "src/app/models/trip.model";
-import { DataService } from "src/app/data.service";
+import { Trip } from "../../models/trip.model";
+import { DataService } from "../../data.service";
 import { Subscription } from "rxjs";
 import { map } from "rxjs/operators";
 import { NavController, AlertController } from "@ionic/angular";
