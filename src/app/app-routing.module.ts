@@ -37,9 +37,34 @@ const routes: Routes = [
   },
   {
     path: "trip-details/:tripId",
+    canLoad: [AuthGuard],
     loadChildren: () =>
       import("../app/trips/trip-details/trip-details.module").then(
         (m) => m.TripDetailsPageModule
+      ),
+  },
+  {
+    path: "recipt-details/:timeStamp",
+    canLoad: [AuthGuard],
+    loadChildren: () =>
+      import("../app/trips/recipt-details/recipt-details.module").then(
+        (m) => m.ReciptDetailsPageModule
+      ),
+  },
+  {
+    path: "recipts-edit/:timeStamp",
+    canLoad: [AuthGuard],
+    loadChildren: () =>
+      import("../app/trips/recipts-edit/recipts-edit.module").then(
+        (m) => m.ReciptsEditPageModule
+      ),
+  },
+  {
+    path: "recipt-new/:tripId",
+    canLoad: [AuthGuard],
+    loadChildren: () =>
+      import("../app/trips/recipt-new/recipt-new.module").then(
+        (m) => m.ReciptNewPageModule
       ),
   },
 ];
