@@ -79,8 +79,7 @@ export class DataService {
     this._trips.next(initialTrips);
   }
 
-  // Update the trips array, emitting the new value to all subscribers.
-  // SEND NEW TRIP TO THE SERVER!!!
+  // Update the trips array, emitting the new value to all subscribers and send the new trip to the server
   newTrip(trip: Trip) {
     // Create a new Trip object
     let newTrip = new Trip(
@@ -94,24 +93,15 @@ export class DataService {
     );
     // get the current value of this._trips and add the newTrip onto it, creating a new value to emit
     this._trips.next(this._trips.getValue().concat(newTrip));
-    // this._trips Trip array is now emitted out to all subscribers to update the page automatically
-    // SEND THE UPDATED TRIP ARRAY TO THE BACKEND FOR SERVER STORAGE!!
-    // let params = new HttpParams() // add the form data as fields to the URL for the server to read
-    //   .set("user", `${trip.user}`)
-    //   .set("tripId", `${trip.tripId}`)
-    //   .set("location", `${trip.location}`)
-    //   .set("description", `${trip.description}`)
-    //   .set("dateFrom", `${trip.dateFrom}`)
-    //   .set("dateTo", `${trip.dateTo}`)
-    //   .set("price", `${trip.price}`);
     this.http.post<any[]>(`${this.baseUrl}trips`, trip).subscribe();
     // Navigate back to all trips page
     this.router.navigate(["/trips/tabs/all-trips"]);
   }
 
-  editTrip(updatedTrip: Trip) {
+  editTrip(updatedTrip: any) {
     const newTripsArray: Trip[] = [];
     const currentTrips = this._trips.getValue();
+    console.log(updatedTrip);
     // loop through the current trips and add all trips which do not have the editted trip's id into a new array.
     // The updated trip is then also pushed to this new array, which can be emitted to update the value around the app.
     currentTrips.forEach((trip) => {
@@ -119,15 +109,24 @@ export class DataService {
         newTripsArray.push(trip);
       }
     });
-    newTripsArray.push(updatedTrip);
+    let edittedTrip = new Trip(
+      updatedTrip.user,
+      updatedTrip.tripId,
+      updatedTrip.location,
+      updatedTrip.description,
+      updatedTrip.dateFrom,
+      updatedTrip.dateTo,
+      updatedTrip.price
+    );
+    newTripsArray.push(edittedTrip);
     this._trips.next(newTripsArray);
 
     // Update the trip on the database by sending it to the server
     // convert the dates to strings in the correct format, as need to send data as string in http request:
     console.log(updatedTrip.dateFrom);
     console.log(typeof updatedTrip.dateFrom);
-    let dateToString = updatedTrip.dateFrom.toISOString();
-    let dateFromString = updatedTrip.dateTo.toISOString();
+    let dateToString = updatedTrip.dateFromAsDate.toISOString();
+    let dateFromString = updatedTrip.dateToAsDate.toISOString();
 
     let putData = {
       tripId: updatedTrip.tripId,
@@ -189,6 +188,34 @@ export class DataService {
   // trips fetched from the server are sent here to be emitted to _trips so that the data is updated across the application
   getInitialReciepts(initialReciepts: Receipt[]) {
     this._reciepts.next(initialReciepts);
+  }
+
+  newReceipt(receipt: Receipt) {
+    // Create a new Trip object
+    let newReceipt = new Receipt(
+      receipt.user,
+      receipt.tripId,
+      receipt.image,
+      receipt.price,
+      receipt.timestamp
+    );
+    console.log(newReceipt);
+
+    // emit new receipt onto receipt array
+
+    // add new receipt into database
+
+    // get all receipts which belong to the trip, loop throguh them to get total price
+
+    // fetch current trip, make its price equal total price
+
+    // update price change in the database
+
+    // get the current value of this._trips and add the newTrip onto it, creating a new value to emit
+    this._reciepts.next(this._reciepts.getValue().concat(newReceipt));
+    // this.http.post<any[]>(`${this.baseUrl}trips`, trip).subscribe();
+    // Navigate back to all trips page
+    this.router.navigate(["/trips/tabs/all-trips"]);
   }
 
   clearTripsOnLogout() {

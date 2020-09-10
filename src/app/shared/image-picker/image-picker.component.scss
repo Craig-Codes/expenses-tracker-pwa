@@ -1,8 +1,8 @@
 .picker {
-  width: 30rem;
-  max-width: 80%;
-  height: 20rem;
-  max-height: 30vh;
+  width: auto;
+  max-width: 100%;
+  min-height: 15rem;
+  max-height: 50vh;
   border: 1px solid var(--ion-color-primary);
   margin: auto;
   display: flex;

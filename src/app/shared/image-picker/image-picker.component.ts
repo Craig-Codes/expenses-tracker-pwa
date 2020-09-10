@@ -1,91 +1,34 @@
-import {
-  Component,
-  OnInit,
-  Output,
-  EventEmitter,
-  ViewChild,
-  ElementRef,
-  Input,
-} from "@angular/core";
-import {
-  Plugins,
-  Capacitor,
-  CameraSource,
-  CameraResultType,
-} from "@capacitor/core";
-import { Platform } from "@ionic/angular";
+import { Component, Output, EventEmitter, Input } from "@angular/core";
+import { Plugins, CameraSource, CameraResultType } from "@capacitor/core";
 
 @Component({
   selector: "app-image-picker",
-  templateUrl: "./image-picker.component.html",
-  styleUrls: ["./image-picker.component.scss"],
+  templateUrl: "../image-picker/image-picker.component.html",
+  styleUrls: ["../image-picker/image-picker.component.scss"],
 })
-export class ImagePickerComponent implements OnInit {
-  @ViewChild("filePicker", { static: false }) filePickerRef: ElementRef<
-    HTMLInputElement
-  >;
-  @Output() imagePick = new EventEmitter<string | File>();
-  @Input() showPreview = false;
+export class ImagePickerComponent {
+  @Output() imagePick = new EventEmitter<string>(); // custom event is emitted in parent component, with parameter passed as the emit value
+  @Input() showPreview = false; // value is taken from the parent component. In this case, the form.value.image from the recipt-new.page.ts
   selectedImage: string;
-  usePicker = false;
 
-  constructor(private platform: Platform) {}
-
-  ngOnInit() {
-    console.log("Mobile:", this.platform.is("mobile"));
-    console.log("Hybrid:", this.platform.is("hybrid"));
-    console.log("iOS:", this.platform.is("ios"));
-    console.log("Android:", this.platform.is("android"));
-    console.log("Desktop:", this.platform.is("desktop"));
-    if (
-      // these checks will ensure we are running
-      (this.platform.is("mobile") && !this.platform.is("hybrid")) ||
-      this.platform.is("desktop")
-    ) {
-      this.usePicker = true;
-    }
-  }
+  constructor() {}
 
   onPickImage() {
-    // If camera is unavaliable - use a picker
-    if (!Capacitor.isPluginAvailable("Camera")) {
-      this.filePickerRef.nativeElement.click();
-      return;
-    }
-    // if camera is avaliable
     Plugins.Camera.getPhoto({
       quality: 50,
-      source: CameraSource.Prompt,
       correctOrientation: true,
       height: 320,
       width: 200,
+      allowEditing: false,
       resultType: CameraResultType.DataUrl,
+      source: CameraSource.Photos,
     })
       .then((image) => {
-        this.selectedImage = image.dataUrl;
-        this.imagePick.emit(image.dataUrl);
+        this.selectedImage = image.dataUrl; // image base64 string which can be used as an image src
+        this.imagePick.emit(image.dataUrl); // this event is emitted, triggering the event on the receipt new page
       })
       .catch((error) => {
         console.log(error);
-        if (this.usePicker) {
-          this.filePickerRef.nativeElement.click();
-        }
-        return false;
       });
-  }
-
-  onFileChosen(event: Event) {
-    // we get a file here
-    const pickedFile = (event.target as HTMLInputElement).files[0];
-    if (!pickedFile) {
-      return;
-    }
-    const fr = new FileReader();
-    fr.onload = () => {
-      const dataUrl = fr.result.toString();
-      this.selectedImage = dataUrl;
-      this.imagePick.emit(pickedFile); // emits a file
-    };
-    fr.readAsDataURL(pickedFile);
   }
 }

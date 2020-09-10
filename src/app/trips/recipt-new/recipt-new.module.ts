@@ -7,6 +7,7 @@ import { IonicModule } from "@ionic/angular";
 import { ReciptNewPageRoutingModule } from "./recipt-new-routing.module";
 
 import { ReciptNewPage } from "./recipt-new.page";
+import { SharedModule } from "../../shared/shared.module";
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import { ReciptNewPage } from "./recipt-new.page";
     IonicModule,
     ReciptNewPageRoutingModule,
     ReactiveFormsModule,
+    SharedModule,
   ],
   declarations: [ReciptNewPage],
 })
