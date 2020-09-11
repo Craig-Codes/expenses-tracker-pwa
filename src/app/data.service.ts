@@ -200,19 +200,26 @@ export class DataService {
       receipt.timestamp
     );
     console.log(newReceipt);
-
     // emit new receipt onto receipt array
-
+    this._reciepts.next(this._reciepts.getValue().concat(newReceipt));
     // add new receipt into database
-
-    // get all receipts which belong to the trip, loop throguh them to get total price
-
+    this.http.post<any[]>(`${this.baseUrl}receipts`, newReceipt).subscribe();
+    // get all receipts which belong to the trip, loop through them to get total price
+    const currentReceipts = this._reciepts.getValue();
+    let newTotal = 0;
+    console.log(currentReceipts);
+    currentReceipts.forEach((receipt) => {
+      if (receipt.tripId === newReceipt.tripId) {
+        newTotal += receipt.price;
+      }
+    });
+    console.log("newTotal ======= ", newTotal);
     // fetch current trip, make its price equal total price
 
     // update price change in the database
 
     // get the current value of this._trips and add the newTrip onto it, creating a new value to emit
-    this._reciepts.next(this._reciepts.getValue().concat(newReceipt));
+
     // this.http.post<any[]>(`${this.baseUrl}trips`, trip).subscribe();
     // Navigate back to all trips page
     this.router.navigate(["/trips/tabs/all-trips"]);
