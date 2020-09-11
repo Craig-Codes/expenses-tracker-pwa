@@ -5,6 +5,8 @@ import { UserService } from "./user.service";
 import { BehaviorSubject } from "rxjs";
 import { HttpParams, HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
+import { take } from "rxjs/operators";
+import { DatePipe } from "@angular/common";
 
 @Injectable({
   providedIn: "root",
@@ -215,13 +217,20 @@ export class DataService {
     });
     console.log("newTotal ======= ", newTotal);
     // fetch current trip, make its price equal total price
-
-    // update price change in the database
-
-    // get the current value of this._trips and add the newTrip onto it, creating a new value to emit
-
-    // this.http.post<any[]>(`${this.baseUrl}trips`, trip).subscribe();
-    // Navigate back to all trips page
+    let currentTrip: any = {};
+    this.trips.pipe(take(1)).subscribe((trips) => {
+      trips.forEach((trip) => {
+        if (trip.tripId === newReceipt.tripId) {
+          currentTrip = trip;
+        }
+      });
+      currentTrip.price = newTotal;
+      currentTrip.dateFromAsDate = new Date(currentTrip.dateFrom);
+      currentTrip.dateToAsDate = new Date(currentTrip.dateTo);
+      console.log(currentTrip);
+      // pass the editted trip details into the editTrip method so that it is editted in the database and emitted across the application
+      this.editTrip(currentTrip);
+    });
     this.router.navigate(["/trips/tabs/all-trips"]);
   }
 
