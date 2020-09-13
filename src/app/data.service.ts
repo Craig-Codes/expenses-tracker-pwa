@@ -15,54 +15,21 @@ export class DataService {
     private userService: UserService,
     private http: HttpClient,
     private router: Router
-  ) {
-    // On service creation, send http requests to get initial Trips and Recipts
-
-    // Get trips
-    console.log(this.userService.user.email);
-    const params = new HttpParams().set("user", this.userService.user.email); // get the current user
-    this.http
-      .get<any[]>(`${this.baseUrl}trips`, { params })
-      .subscribe((returnedTrips) => {
-        console.log("retrieved initial trips");
-        const usersTripArray: Trip[] = [];
-        returnedTrips.forEach((trip) => {
-          console.log(trip);
-          let createdTrip = new Trip(
-            trip.user,
-            trip.tripId,
-            trip.location,
-            trip.description,
-            trip.dateFrom,
-            trip.dateTo,
-            trip.amount
-          );
-          usersTripArray.push(createdTrip);
-        });
-        this.getInitialTrips(usersTripArray);
-      });
-
-    // Get Receipts
-    this.http
-      .get<any[]>(`${this.baseUrl}receipts`, { params })
-      .subscribe((returnedReciepts) => {
-        const usersRecieptArray: Receipt[] = [];
-        returnedReciepts.forEach((reciept) => {
-          console.log(reciept);
-          let createdReceipt = new Receipt(
-            reciept.user,
-            reciept.tripId,
-            reciept.image,
-            reciept.price,
-            reciept.timestamp
-          );
-          usersRecieptArray.push(createdReceipt);
-        });
-        this.getInitialReciepts(usersRecieptArray);
-      });
-  }
+  ) {}
 
   baseUrl: string = "http://localhost:3000/";
+
+  getInitialDataTrips() {
+    console.log(this.userService.user.email);
+    const params = new HttpParams().set("user", this.userService.user.email); // get the current user
+    return this.http.get<any[]>(`${this.baseUrl}trips`, { params });
+  }
+
+  getInitialDataReceipts() {
+    // Get Receipts
+    const params = new HttpParams().set("user", this.userService.user.email); // get the current user
+    return this.http.get<any[]>(`${this.baseUrl}receipts`, { params });
+  }
 
   private _trips = new BehaviorSubject<Trip[]>([]);
   // array of all trips for that user via a http request to the REST api (node.js server).

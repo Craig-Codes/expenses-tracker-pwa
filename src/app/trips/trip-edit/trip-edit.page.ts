@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { Trip } from "../../models/trip.model";
 import { DataService } from "../../data.service";
 import { Subscription } from "rxjs";
@@ -30,7 +30,8 @@ export class TripEditPage implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private dataService: DataService,
     private navCtrl: NavController,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -88,8 +89,19 @@ export class TripEditPage implements OnInit, OnDestroy {
   }
 
   onUpdateTrip() {
+    // ensure the form is valid
     if (!this.form.valid) {
-      return; // ensure the form is valid
+      return;
+    }
+    // if no change in the form, navigate away without making a http request
+    if (
+      this.tripToEdit[0].price === this.form.value.location &&
+      this.tripToEdit[0].description === this.form.value.description &&
+      this.tripToEdit[0].dateFrom === this.form.value.dateFrom &&
+      this.tripToEdit[0].dateTo === this.form.value.dateTo
+    ) {
+      this.router.navigate(["/trips/tabs/all-trips"]);
+      return;
     }
     // change the trip values to the ones reflected in the form data
     this.tripToEdit[0].location = this.form.value.location;

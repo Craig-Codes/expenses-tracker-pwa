@@ -4,6 +4,8 @@ import { DataService } from "../../data.service";
 import { Trip } from "../../models/trip.model";
 import { Subscription } from "rxjs";
 import { UserService } from "src/app/user.service";
+import { Receipt } from "src/app/models/reciept.model";
+import { LoadingController } from "@ionic/angular";
 
 @Component({
   selector: "app-all-trips",
@@ -13,7 +15,8 @@ import { UserService } from "src/app/user.service";
 export class AllTripsPage implements OnInit, OnDestroy {
   constructor(
     private dataService: DataService,
-    private userService: UserService
+    private userService: UserService,
+    private loadingCtrl: LoadingController
   ) {}
 
   private retrievedTrips: Trip[]; // array of all the trips recieved from the data service
@@ -24,10 +27,12 @@ export class AllTripsPage implements OnInit, OnDestroy {
   isLoading = false; // boolean used to display a loading spinner
   noTripsFound = false; // boolean used to display a message for when the user has no trips yet
 
+  firstTimeLoadFlag = false; // if false, male http requests to server to get data
+
   private tripsSubscription: Subscription; // subscription to the data service _trips behaviour subject.
   // Used to alwatys get the correct array of trips for an individual user
 
-  ngOnInit() {
+  async ngOnInit() {
     this.isLoading = true; // add a loading spinner whilst wait for api query and data service
     this.userPhoto = this.userService.user.photoURL; // set the users photo in the navbar based on the retreived user in the userService - Oauth is required for this to work!
     this.noTripsFound = true; // until trips are located, we assume no trips are found
@@ -36,7 +41,7 @@ export class AllTripsPage implements OnInit, OnDestroy {
     this.tripsSubscription = this.dataService.trips.subscribe((tripsArray) => {
       if (tripsArray.length === 0) {
         this.noTripsFound = true;
-        this.isLoading = false;
+        //  this.isLoading = false;
         return;
       } else {
         this.noTripsFound = false;
@@ -51,6 +56,63 @@ export class AllTripsPage implements OnInit, OnDestroy {
         this.isLoading = false; // once all tasks are complete, remove the loading spinner);
       }
     });
+
+    if (this.firstTimeLoadFlag === false) {
+      console.log(
+        "first time page has loaded, make http requests to get starting data"
+      );
+      // create a modal letting user know we are fetching initial data
+      const loading = await this.loadingCtrl.create({
+        message:
+          "Fetching initial data, please wait... This application is currently hosted on a free Heroku server," +
+          "meaning that the server must wake up before data can be fetched." +
+          "Please allow 30 seconds for this process if the application has not been used in over an hour as the server will be sleeping.",
+      });
+      loading.present();
+
+      this.isLoading = true;
+      this.dataService.getInitialDataTrips().subscribe((returnedTrips) => {
+        console.log("retrieved initial trips");
+        const usersTripArray: Trip[] = [];
+        returnedTrips.forEach((trip) => {
+          console.log(trip);
+          let createdTrip = new Trip(
+            trip.user,
+            trip.tripId,
+            trip.location,
+            trip.description,
+            trip.dateFrom,
+            trip.dateTo,
+            trip.amount
+          );
+          usersTripArray.push(createdTrip);
+        });
+        this.dataService.getInitialTrips(usersTripArray);
+      });
+
+      this.dataService
+        .getInitialDataReceipts()
+        .subscribe((returnedReciepts) => {
+          const usersRecieptArray: Receipt[] = [];
+          returnedReciepts.forEach((reciept) => {
+            console.log(reciept);
+            let createdReceipt = new Receipt(
+              reciept.user,
+              reciept.tripId,
+              reciept.image,
+              reciept.price,
+              reciept.timestamp
+            );
+            usersRecieptArray.push(createdReceipt);
+          });
+          this.dataService.getInitialReciepts(usersRecieptArray);
+        });
+      this.isLoading = false;
+      this.firstTimeLoadFlag = true; // http requests will not be made when we go to this page anymore, and the loading controlled will not appear telling users about the server
+      setTimeout(() => {
+        loading.dismiss();
+      }, 1000);
+    }
   }
 
   onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {

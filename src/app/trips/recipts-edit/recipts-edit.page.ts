@@ -3,7 +3,7 @@ import { Subscription } from "rxjs";
 import { Receipt } from "../../models/reciept.model";
 import { ActivatedRoute, Router } from "@angular/router";
 import { DataService } from "../../data.service";
-import { NavController } from "@ionic/angular";
+import { NavController, AlertController } from "@ionic/angular";
 import { map } from "rxjs/operators";
 import {
   FormGroup,
@@ -29,7 +29,8 @@ export class ReciptsEditPage implements OnInit {
     private route: ActivatedRoute,
     private dataService: DataService,
     private navCtrl: NavController,
-    private router: Router
+    private router: Router,
+    private alertCtrl: AlertController
   ) {}
 
   ngOnInit() {
@@ -79,6 +80,9 @@ export class ReciptsEditPage implements OnInit {
   }
 
   onUpdateReceipt() {
+    if (!this.form.valid) {
+      return; // ensure the form is valid
+    }
     if (this.receiptToEdit[0].price === this.form.value.price) {
       // if the price has not changed, simply navigate back. Check is here to reduce API calls
       this.router.navigate(["/trips/tabs/all-trips"]);
@@ -90,6 +94,28 @@ export class ReciptsEditPage implements OnInit {
   }
 
   onDeleteReceipt() {
-    this.dataService.deleteReceipt(this.receiptToEdit[0]);
+    // modal - allows user to check they really want to delete the trip
+    this.alertCtrl
+      .create({
+        header: "Delete receipt?",
+        message: "Are you sure? Deleting the receipt cannot be undone.",
+        buttons: [
+          {
+            text: "Okay",
+            handler: () => {
+              this.dataService.deleteReceipt(this.receiptToEdit[0]);
+            },
+          },
+          {
+            text: "Cancel",
+            handler: () => {
+              console.log("cancelled delete");
+            },
+          },
+        ],
+      })
+      .then((alertEl) => {
+        alertEl.present();
+      });
   }
 }

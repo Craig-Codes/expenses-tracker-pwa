@@ -70,6 +70,15 @@ export class TripDetailsPage implements OnInit, OnDestroy {
     });
   }
 
+  ionViewWillEnter() {
+    // sort the receipts, earlest date first
+    this.currentReceipts.sort((a, b) => {
+      if (a.timestamp < b.timestamp) return -1;
+      if (a.timestamp > b.timestamp) return 1;
+      return 0;
+    });
+  }
+
   ngOnDestroy() {
     if (this.receiptsSubscription) {
       this.receiptsSubscription.unsubscribe();
