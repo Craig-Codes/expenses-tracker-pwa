@@ -1,10 +1,16 @@
 import { Component, OnInit } from "@angular/core";
 import { Subscription } from "rxjs";
 import { Receipt } from "../../models/reciept.model";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { DataService } from "../../data.service";
 import { NavController } from "@ionic/angular";
 import { map } from "rxjs/operators";
+import {
+  FormGroup,
+  FormControl,
+  Validators,
+  ReactiveFormsModule,
+} from "@angular/forms";
 
 @Component({
   selector: "app-recipts-edit",
@@ -17,10 +23,13 @@ export class ReciptsEditPage implements OnInit {
   receiptSubscription: Subscription; // get the latest array of all recepts from the data service
   receiptToEdit: Receipt[];
 
+  form: FormGroup;
+
   constructor(
     private route: ActivatedRoute,
     private dataService: DataService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -36,7 +45,6 @@ export class ReciptsEditPage implements OnInit {
       this.isLoading = true;
       this.receiptTimeStamp = paramMap.get("timeStamp"); // get the timestamp from the route params
       console.log(this.receiptTimeStamp);
-      this.isLoading = true; // start the spinner whilst data is retrieved - as data is already in memory this shouldn't really be needed
       // whenever we get a new route, we get the latest behaviourSubject / value of the trips array in the dataService
       this.receiptSubscription = this.dataService.reciepts
         .pipe(
@@ -50,9 +58,38 @@ export class ReciptsEditPage implements OnInit {
         .subscribe(() => {
           // we now have the necessary Trip information, remove loading spinner.
           this.isLoading = false;
-          console.log(this.receiptToEdit[0]);
         });
     });
+
+    // create the reactive form
+    this.form = new FormGroup({
+      // We use patch Value on this form control once we have an image so that its updated!
+      price: new FormControl(null, {
+        updateOn: "blur",
+        validators: [
+          Validators.required,
+          Validators.maxLength(7),
+          Validators.minLength(1),
+        ],
+      }),
+    });
+
+    // pre-populate the form
+    this.form.get("price").setValue(this.receiptToEdit[0].price);
   }
-  onUpdateReceipt() {}
+
+  onUpdateReceipt() {
+    if (this.receiptToEdit[0].price === this.form.value.price) {
+      // if the price has not changed, simply navigate back. Check is here to reduce API calls
+      this.router.navigate(["/trips/tabs/all-trips"]);
+    } else {
+      this.receiptToEdit[0].price = this.form.value.price; // update the receipt with new price
+      // pass in the receipt to the data service edit receipt method
+      this.dataService.editReceipt(this.receiptToEdit[0]);
+    }
+  }
+
+  onDeleteReceipt() {
+    this.dataService.deleteReceipt(this.receiptToEdit[0]);
+  }
 }
