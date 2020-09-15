@@ -16,8 +16,6 @@ export class ImagePickerComponent {
   onPickImage() {
     Plugins.Camera.getPhoto({
       quality: 100,
-      correctOrientation: false,
-      height: 225,
       width: 200,
       allowEditing: false,
       resultType: CameraResultType.DataUrl,
