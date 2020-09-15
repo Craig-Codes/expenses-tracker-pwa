@@ -1,5 +1,4 @@
 // Model of what should be included in each receipt object
-
 export class Receipt {
   constructor(
     public user: string,

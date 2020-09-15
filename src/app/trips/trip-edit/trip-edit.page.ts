@@ -89,30 +89,32 @@ export class TripEditPage implements OnInit, OnDestroy {
   }
 
   onUpdateTrip() {
+    console.log("updating trip...");
     // ensure the form is valid
     if (!this.form.valid) {
       return;
     }
     // if no change in the form, navigate away without making a http request
     if (
-      this.tripToEdit[0].price === this.form.value.location &&
+      this.tripToEdit[0].location === this.form.value.location &&
       this.tripToEdit[0].description === this.form.value.description &&
       this.tripToEdit[0].dateFrom === this.form.value.dateFrom &&
       this.tripToEdit[0].dateTo === this.form.value.dateTo
     ) {
       this.router.navigate(["/trips/tabs/all-trips"]);
       return;
+    } else {
+      // change the trip values to the ones reflected in the form data
+      this.tripToEdit[0].location = this.form.value.location;
+      this.tripToEdit[0].description = this.form.value.description;
+      this.tripToEdit[0].dateFrom = this.form.value.dateFrom;
+      this.tripToEdit[0].dateTo = this.form.value.dateTo;
+      // For the database we need the date in the correct format (ISO) so that it can be stored and retreived correctly.
+      this.tripToEdit[0].dateFromAsDate = new Date(this.form.value.dateFrom);
+      this.tripToEdit[0].dateToAsDate = new Date(this.form.value.dateTo);
+      // send updated trip to the dataService to update the _trips array and emit to all subscribed components
+      this.dataService.editTrip(this.tripToEdit[0]);
     }
-    // change the trip values to the ones reflected in the form data
-    this.tripToEdit[0].location = this.form.value.location;
-    this.tripToEdit[0].description = this.form.value.description;
-    this.tripToEdit[0].dateFrom = this.form.value.dateFrom;
-    this.tripToEdit[0].dateTo = this.form.value.dateTo;
-    // For the database we need the date in the correct format (ISO) so that it can be stored and retreived correctly.
-    this.tripToEdit[0].dateFromAsDate = new Date(this.form.value.dateFrom);
-    this.tripToEdit[0].dateToAsDate = new Date(this.form.value.dateTo);
-    // send updated trip to the dataService to update the _trips array and emit to all subscribed components
-    this.dataService.editTrip(this.tripToEdit[0]);
   }
 
   onDeleteTrip() {

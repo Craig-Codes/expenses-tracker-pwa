@@ -1,5 +1,4 @@
 // Model of what each trip object should look like
-
 export class Trip {
   constructor(
     public user: string,

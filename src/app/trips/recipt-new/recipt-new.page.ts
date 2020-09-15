@@ -45,7 +45,6 @@ export class ReciptNewPage implements OnInit {
   // between the two components when ever an image is picked.
   onImagePicked(imageData: string) {
     this.form.patchValue({ image: imageData }); // form data is populated by imageData string from the Camera event
-    console.log("form image value ===== ", this.form.value.image);
   }
 
   onAddReceipt() {

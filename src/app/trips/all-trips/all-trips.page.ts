@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { SegmentChangeEventDetail } from "@ionic/core";
 import { DataService } from "../../data.service";
-import { Trip } from "../../models/trip.model";
 import { Subscription } from "rxjs";
 import { UserService } from "src/app/user.service";
-import { Receipt } from "src/app/models/reciept.model";
 import { LoadingController } from "@ionic/angular";
+
+import { Trip } from "../../models/trip.model";
+import { Receipt } from "src/app/models/reciept.model";
 
 @Component({
   selector: "app-all-trips",
@@ -26,11 +27,9 @@ export class AllTripsPage implements OnInit, OnDestroy {
   totalToClaim: number; // stores the total claim amount for all trips
   isLoading = false; // boolean used to display a loading spinner
   noTripsFound = false; // boolean used to display a message for when the user has no trips yet
-
   firstTimeLoadFlag = false; // if false, male http requests to server to get data
-
   private tripsSubscription: Subscription; // subscription to the data service _trips behaviour subject.
-  // Used to alwatys get the correct array of trips for an individual user
+  // Used to always get the correct array of trips for an individual user
 
   async ngOnInit() {
     this.isLoading = true; // add a loading spinner whilst wait for api query and data service
@@ -40,11 +39,10 @@ export class AllTripsPage implements OnInit, OnDestroy {
     // Subscribe to any changes on the trips array inside the data service. This service always contains the state of the trips array
     this.tripsSubscription = this.dataService.trips.subscribe((tripsArray) => {
       if (tripsArray.length === 0) {
-        this.noTripsFound = true;
-        //  this.isLoading = false;
+        this.noTripsFound = true; // boolean used to display starter messages in the template to give instructions to new users
         return;
       } else {
-        this.noTripsFound = false;
+        this.noTripsFound = false; // removes new user instructions
         this.retrievedTrips = tripsArray;
         // orderedTrips array needs to be a seperate array in memory, so slice creates a brand new array, no longer sharing a pointer to heap memory (arrays / objects are reference types)
         this.orderedTrips = this.retrievedTrips.slice(0);
@@ -57,20 +55,18 @@ export class AllTripsPage implements OnInit, OnDestroy {
       }
     });
 
+    // If we are loading this page for the first time, we need to make http requests to the backend to get our trips and receipts
     if (this.firstTimeLoadFlag === false) {
-      console.log(
-        "first time page has loaded, make http requests to get starting data"
-      );
-      // create a modal letting user know we are fetching initial data
+      // create a modal letting user know we are fetching initial data. This blocks user until the data is fetched.
+      // App will not work until we get successful server replies, ensuring user is online
       const loading = await this.loadingCtrl.create({
         message:
-          "Fetching initial data, please wait... This application is currently hosted on a free Heroku server," +
-          "meaning that the server must wake up before data can be fetched." +
+          "Fetching initial data, please ensure you have internet connectivity ... This application is currently hosted on a free Heroku server, " +
+          "meaning that the server must wake up before data can be fetched. " +
           "Please allow 30 seconds for this process if the application has not been used in over an hour as the server will be sleeping.",
       });
       loading.present();
-
-      this.isLoading = true;
+      // Subscribe to any changes in the data service getInitialDataTrips method, essentially calling the method and making each returned trip into a Trip object
       this.dataService.getInitialDataTrips().subscribe((returnedTrips) => {
         console.log("retrieved initial trips");
         const usersTripArray: Trip[] = [];
@@ -87,9 +83,11 @@ export class AllTripsPage implements OnInit, OnDestroy {
           );
           usersTripArray.push(createdTrip);
         });
+        // Send the correctly formatted data into the getInitialTrips method so that the trips are emitted and sent to all subscribers
         this.dataService.getInitialTrips(usersTripArray);
       });
 
+      // Subscribe to any changes in the data service getInitialDataReceipts method, essentially calling the method and making each returned receipts into a Receipt object
       this.dataService
         .getInitialDataReceipts()
         .subscribe((returnedReciepts) => {
@@ -105,12 +103,13 @@ export class AllTripsPage implements OnInit, OnDestroy {
             );
             usersRecieptArray.push(createdReceipt);
           });
+          // Send the correctly formatted data into the getInitialReceipts method so that the receipts are emitted and sent to all subscribers
           this.dataService.getInitialReciepts(usersRecieptArray);
           this.isLoading = false;
           this.firstTimeLoadFlag = true; // http requests will not be made when we go to this page anymore, and the loading controlled will not appear telling users about the server
           setTimeout(() => {
             loading.dismiss();
-          }, 1000);
+          }, 2000); // delay loader removal to ensure receipts have loaded in correctly
         });
     }
   }

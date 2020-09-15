@@ -6,6 +6,7 @@ import { BehaviorSubject } from "rxjs";
 import { HttpParams, HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { take } from "rxjs/operators";
+import { AlertController } from "@ionic/angular";
 
 @Injectable({
   providedIn: "root",
@@ -14,10 +15,11 @@ export class DataService {
   constructor(
     private userService: UserService,
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private alertCtrl: AlertController
   ) {}
 
-  baseUrl: string = "http://localhost:3000/";
+  baseUrl: string = "https://expenses-tracker-backend-node.herokuapp.com/";
 
   getInitialDataTrips() {
     console.log(this.userService.user.email);
@@ -49,51 +51,35 @@ export class DataService {
 
   // Update the trips array, emitting the new value to all subscribers and send the new trip to the server
   newTrip(trip: Trip) {
-    // Create a new Trip object
-    let newTrip = new Trip(
-      trip.user,
-      trip.tripId,
-      trip.location,
-      trip.description,
-      trip.dateFrom,
-      trip.dateTo,
-      trip.price
+    return this.http.post<any[]>(`${this.baseUrl}trips`, trip).subscribe(
+      (res) => {
+        // If successful Create a new Trip object and emit across app so that app reflects database state
+        let newTrip = new Trip(
+          trip.user,
+          trip.tripId,
+          trip.location,
+          trip.description,
+          trip.dateFrom,
+          trip.dateTo,
+          trip.price
+        );
+        // get the current value of this._trips and add the newTrip onto it, creating a new value to emit
+        this._trips.next(this._trips.getValue().concat(newTrip));
+        this.presentAlertSuccess("New trip created and saved.");
+      },
+      (error) => {
+        this.presentAlert();
+      }
     );
-    // get the current value of this._trips and add the newTrip onto it, creating a new value to emit
-    this._trips.next(this._trips.getValue().concat(newTrip));
-    this.http.post<any[]>(`${this.baseUrl}trips`, trip).subscribe();
     // Navigate back to all trips page
-    this.router.navigate(["/trips/tabs/all-trips"]);
+    // this.router.navigate(["/trips/tabs/all-trips"]);
   }
 
   editTrip(updatedTrip: any) {
-    const newTripsArray: Trip[] = [];
-    const currentTrips = this._trips.getValue();
-    console.log(updatedTrip);
-    // loop through the current trips and add all trips which do not have the editted trip's id into a new array.
-    // The updated trip is then also pushed to this new array, which can be emitted to update the value around the app.
-    currentTrips.forEach((trip) => {
-      if (trip.tripId !== updatedTrip.tripId) {
-        newTripsArray.push(trip);
-      }
-    });
-    let edittedTrip = new Trip(
-      updatedTrip.user,
-      updatedTrip.tripId,
-      updatedTrip.location,
-      updatedTrip.description,
-      updatedTrip.dateFrom,
-      updatedTrip.dateTo,
-      updatedTrip.price
-    );
-    newTripsArray.push(edittedTrip);
-    this._trips.next(newTripsArray);
-
     // Update the trip on the database by sending it to the server
     // convert the dates to strings in the correct format, as need to send data as string in http request (converted back to dates for storage by the server):
     let dateToString = updatedTrip.dateFromAsDate.toISOString();
     let dateFromString = updatedTrip.dateToAsDate.toISOString();
-
     let putData = {
       tripId: updatedTrip.tripId,
       location: updatedTrip.location,
@@ -103,41 +89,74 @@ export class DataService {
       amount: updatedTrip.price,
     };
     let params = new HttpParams({ fromObject: putData });
-    this.http.put<any[]>(`${this.baseUrl}trips`, params).subscribe();
-    this.router.navigate(["/trips/tabs/all-trips"]);
+    return this.http
+      .put<any[]>(`${this.baseUrl}trips`, params, { observe: "response" })
+      .subscribe(
+        (res) => {
+          // If we get a response, trip has saved so we want to ammend these details in the application to refelct database state
+          const newTripsArray: Trip[] = [];
+          const currentTrips = this._trips.getValue();
+          console.log(updatedTrip);
+          // loop through the current trips and add all trips which do not have the editted trip's id into a new array.
+          // The updated trip is then also pushed to this new array, which can be emitted to update the value around the app.
+          currentTrips.forEach((trip) => {
+            if (trip.tripId !== updatedTrip.tripId) {
+              newTripsArray.push(trip);
+            }
+          });
+          let edittedTrip = new Trip(
+            updatedTrip.user,
+            updatedTrip.tripId,
+            updatedTrip.location,
+            updatedTrip.description,
+            updatedTrip.dateFrom,
+            updatedTrip.dateTo,
+            updatedTrip.price
+          );
+          newTripsArray.push(edittedTrip);
+          this._trips.next(newTripsArray);
+          this.presentAlertSuccess("Data has been saved.");
+        },
+        (err) => {
+          // If error, then data has not been updated in database or app
+          this.presentAlert();
+        }
+      );
   }
 
   deleteTrip(tripId: string) {
-    console.log("trip deleted");
-    // Delete the Trip from the local app
-    const newTripsArray: Trip[] = [];
-    const currentTrips = this._trips.getValue();
-    currentTrips.forEach((trip) => {
-      // Create a new array, only pushing in objects whose Id's do not match the passed in tripId parameter
-      if (trip.tripId !== tripId) {
-        newTripsArray.push(trip);
-      }
-    });
-    this._trips.next(newTripsArray); // emit the newTripsArray, passing the application an array without the item to be deleted
-    // Create a new array, only pushing the receipts whose id's do not match the passed tripId parameter
-    const newReceiptsArray: Receipt[] = [];
-    const currentReceipts = this._reciepts.getValue();
-    currentReceipts.forEach((receipt) => {
-      // Create a new array, only pushing in objects whose Id's do not match the passed in tripId parameter
-      if (receipt.tripId !== tripId) {
-        newReceiptsArray.push(receipt);
-      }
-    });
-    this._reciepts.next(newReceiptsArray); // emit the newTripsArray, passing the application an array without the item to be deleted
     // Delete the trip and associated receipts from the database
     const params = new HttpParams().set("tripId", tripId); // pass the current tripId as a parameter
-    this.http
+    return this.http
       .delete<any>(`${this.baseUrl}trips`, { params })
-      .subscribe();
-    // navigate back to all trips page
-    this.router.navigate(["/trips/tabs/all-trips"]);
-
-    // DELETE ALL ASSOCIATED RECEIPTS - BOTH IN APP AND DATABASE!!!
+      .subscribe(
+        (res) => {
+          this.presentAlertSuccess("Trip has been deleted.");
+          // Delete the Trip from the local app to reflect database changes
+          const newTripsArray: Trip[] = [];
+          const currentTrips = this._trips.getValue();
+          currentTrips.forEach((trip) => {
+            // Create a new array, only pushing in objects whose Id's do not match the passed in tripId parameter
+            if (trip.tripId !== tripId) {
+              newTripsArray.push(trip);
+            }
+          });
+          this._trips.next(newTripsArray); // emit the newTripsArray, passing the application an array without the item to be deleted
+          // Create a new array, only pushing the receipts whose id's do not match the passed tripId parameter
+          const newReceiptsArray: Receipt[] = [];
+          const currentReceipts = this._reciepts.getValue();
+          currentReceipts.forEach((receipt) => {
+            // Create a new array, only pushing in objects whose Id's do not match the passed in tripId parameter
+            if (receipt.tripId !== tripId) {
+              newReceiptsArray.push(receipt);
+            }
+          });
+          this._reciepts.next(newReceiptsArray); // emit the newTripsArray, passing the application an array without the item to be deleted
+        },
+        (error) => {
+          this.presentAlert();
+        }
+      );
   }
 
   // will hold an array of all the fetched reciepts for a user from database
@@ -166,63 +185,45 @@ export class DataService {
       receipt.price,
       receipt.timestamp
     );
-    console.log(newReceipt);
-    // emit new receipt onto receipt array
-    this._reciepts.next(this._reciepts.getValue().concat(newReceipt));
     // add new receipt into database
-    this.http.post<any[]>(`${this.baseUrl}receipts`, newReceipt).subscribe();
-    // get all receipts which belong to the trip, loop through them to get total price
-    const currentReceipts = this._reciepts.getValue();
-    let newTotal = 0;
-    console.log(currentReceipts);
-    currentReceipts.forEach((receipt) => {
-      if (receipt.tripId === newReceipt.tripId) {
-        newTotal += receipt.price;
+    this.http.post<any[]>(`${this.baseUrl}receipts`, newReceipt).subscribe(
+      (res) => {
+        // emit new receipt onto receipt array
+        this._reciepts.next(this._reciepts.getValue().concat(newReceipt));
+        // get all receipts which belong to the trip, loop through them to get total price
+        const currentReceipts = this._reciepts.getValue();
+        let newTotal = 0;
+        console.log(currentReceipts);
+        currentReceipts.forEach((receipt) => {
+          if (receipt.tripId === newReceipt.tripId) {
+            newTotal += receipt.price;
+          }
+        });
+        console.log("newTotal ======= ", newTotal);
+        // fetch current trip, make its price equal total price
+        let currentTrip: any = {};
+        // subscribing to a behaviour subject gives the current value
+        this.trips.pipe(take(1)).subscribe((trips) => {
+          trips.forEach((trip) => {
+            if (trip.tripId === newReceipt.tripId) {
+              currentTrip = trip;
+            }
+          });
+          currentTrip.price = newTotal;
+          currentTrip.dateFromAsDate = new Date(currentTrip.dateFrom);
+          currentTrip.dateToAsDate = new Date(currentTrip.dateTo);
+          console.log(currentTrip);
+          // pass the editted trip details into the editTrip method so that it is editted in the database and emitted across the application
+          this.editTrip(currentTrip);
+        });
+      },
+      (error) => {
+        this.presentAlert();
       }
-    });
-    console.log("newTotal ======= ", newTotal);
-    // fetch current trip, make its price equal total price
-    let currentTrip: any = {};
-    // subscribing to a behaviour subject gives the current value
-    this.trips.pipe(take(1)).subscribe((trips) => {
-      trips.forEach((trip) => {
-        if (trip.tripId === newReceipt.tripId) {
-          currentTrip = trip;
-        }
-      });
-      currentTrip.price = newTotal;
-      currentTrip.dateFromAsDate = new Date(currentTrip.dateFrom);
-      currentTrip.dateToAsDate = new Date(currentTrip.dateTo);
-      console.log(currentTrip);
-      // pass the editted trip details into the editTrip method so that it is editted in the database and emitted across the application
-      this.editTrip(currentTrip);
-    });
+    );
   }
 
   editReceipt(updatedReceipt: any) {
-    const newReceiptsArray: Receipt[] = [];
-    const currentReceipts = this._reciepts.getValue();
-    console.log(updatedReceipt);
-    // loop through the current receipts and add all receipts which do not have the editted receipts timestamp into a new array.
-    // The updated receipt is then also pushed to this new array, which can be emitted to update the value around the app.
-    currentReceipts.forEach((receipt) => {
-      if (receipt.timestamp !== updatedReceipt.timestamp) {
-        newReceiptsArray.push(receipt);
-      }
-    });
-    let edittedReceipt = new Receipt(
-      updatedReceipt.user,
-      updatedReceipt.tripId,
-      updatedReceipt.image,
-      updatedReceipt.price,
-      updatedReceipt.timestamp
-    );
-    newReceiptsArray.push(edittedReceipt);
-    this._reciepts.next(newReceiptsArray);
-    // Update the Receipt on the database by sending it to the server
-    // convert the dates to strings in the correct format, as need to send data as string in http request (converted back to dates for storage by the server):
-    console.log(typeof edittedReceipt.timestamp);
-
     let putData = {
       user: updatedReceipt.tripId,
       tripId: updatedReceipt.location,
@@ -231,89 +232,153 @@ export class DataService {
       timestamp: updatedReceipt.timestamp,
     };
     let params = new HttpParams({ fromObject: putData });
-    this.http.put<any[]>(`${this.baseUrl}receipts`, params).subscribe();
-
-    // Deal with the Trip. Price needs updated, emitted across the app, and sent to the database
-    // Get the current total of all receipts with matching tripId's to the currently editted trip
-    let newTotal = 0;
-    console.log(currentReceipts);
-    currentReceipts.forEach((receipt) => {
-      if (receipt.tripId === updatedReceipt.tripId) {
-        newTotal += receipt.price;
-      }
-    });
-    console.log("newTotal ======= ", newTotal);
-    // Get the trip by the updatedReceipts tripId
-    let currentTrip: any = {};
-    this.trips.pipe(take(1)).subscribe((trips) => {
-      trips.forEach((trip) => {
-        if (trip.tripId === updatedReceipt.tripId) {
-          currentTrip = trip;
+    this.http.put<any[]>(`${this.baseUrl}receipts`, params).subscribe((res) => {
+      const newReceiptsArray: Receipt[] = [];
+      const currentReceipts = this._reciepts.getValue();
+      // loop through the current receipts and add all receipts which do not have the editted receipts timestamp into a new array.
+      // The updated receipt is then also pushed to this new array, which can be emitted to update the value around the app.
+      currentReceipts.forEach((receipt) => {
+        if (receipt.timestamp !== updatedReceipt.timestamp) {
+          newReceiptsArray.push(receipt);
         }
       });
-      currentTrip.price = newTotal; // set the trips price to equal to calculated total
-      currentTrip.dateFromAsDate = new Date(currentTrip.dateFrom);
-      currentTrip.dateToAsDate = new Date(currentTrip.dateTo);
-      console.log(currentTrip);
-      // pass the editted trip details into the editTrip method so that it is editted in the database and emitted across the application
-      this.editTrip(currentTrip);
+      let edittedReceipt = new Receipt(
+        updatedReceipt.user,
+        updatedReceipt.tripId,
+        updatedReceipt.image,
+        updatedReceipt.price,
+        updatedReceipt.timestamp
+      );
+      newReceiptsArray.push(edittedReceipt);
+      this._reciepts.next(newReceiptsArray);
+      // Update the Receipt on the database by sending it to the server
+      // convert the dates to strings in the correct format, as need to send data as string in http request (converted back to dates for storage by the server):
+      console.log(typeof edittedReceipt.timestamp);
+      let newTotal = 0;
+      console.log(currentReceipts);
+      currentReceipts.forEach((receipt) => {
+        if (receipt.tripId === updatedReceipt.tripId) {
+          newTotal += receipt.price;
+        }
+      });
+      console.log("newTotal ======= ", newTotal);
+      // Get the trip by the updatedReceipts tripId
+      let currentTrip: any = {};
+      this.trips.pipe(take(1)).subscribe(
+        (trips) => {
+          trips.forEach((trip) => {
+            if (trip.tripId === updatedReceipt.tripId) {
+              currentTrip = trip;
+            }
+          });
+          currentTrip.price = newTotal; // set the trips price to equal to calculated total
+          currentTrip.dateFromAsDate = new Date(currentTrip.dateFrom);
+          currentTrip.dateToAsDate = new Date(currentTrip.dateTo);
+          console.log(currentTrip);
+          // pass the editted trip details into the editTrip method so that it is editted in the database and emitted across the application
+          this.editTrip(currentTrip);
+        },
+        (error) => {
+          this.presentAlert();
+        }
+      );
+
+      // Deal with the Trip. Price needs updated, emitted across the app, and sent to the database
+      // Get the current total of all receipts with matching tripId's to the currently editted trip
     });
   }
 
   deleteReceipt(receiptToDelete: any) {
-    console.log("receiptToDelete ====== ", receiptToDelete);
-    console.log(
-      "receiptToDelete typeof timestamp ====== ",
-      typeof receiptToDelete.timestamp
-    );
-    // Delete the Trip from the local app
-    const newReceiptsArray: Receipt[] = [];
-    const currentReceipts = this._reciepts.getValue();
-    currentReceipts.forEach((receipt) => {
-      // Create a new array, only pushing in objects whose Id's do not match the passed in tripId parameter
-      if (receipt.timestamp !== receiptToDelete.timestamp) {
-        newReceiptsArray.push(receipt);
-      }
-    });
-    this._reciepts.next(newReceiptsArray); // emit the newReceiptsArray, passing the application an array without the item to be deleted
-    // Delete the receipt from the database via API
     const params = new HttpParams().set("timestamp", receiptToDelete.timestamp); // pass the receipt timestamp as a parameter
     this.http
       .delete<any>(`${this.baseUrl}receipts`, { params })
-      .subscribe();
-    // Update the Trip's total to remove the deleted receipts amount and emit across app
-    let newTotal = 0;
-    // currentReceipts.forEach((receipt) => {
-    //   if (receipt.tripId === receiptToDelete.tripId) {
-    //     newTotal += receipt.price;
-    //   }
-    // });
-    this.reciepts.pipe(take(1)).subscribe((receipts) => {
-      receipts.forEach((receipt) => {
-        if (receipt.tripId === receiptToDelete.tripId) {
-          newTotal += receipt.price;
+      .subscribe(
+        (res) => {
+          // Delete the Trip from the local app
+          const newReceiptsArray: Receipt[] = [];
+          const currentReceipts = this._reciepts.getValue();
+          currentReceipts.forEach((receipt) => {
+            // Create a new array, only pushing in objects whose Id's do not match the passed in tripId parameter
+            if (receipt.timestamp !== receiptToDelete.timestamp) {
+              newReceiptsArray.push(receipt);
+            }
+          });
+          this._reciepts.next(newReceiptsArray); // emit the newReceiptsArray, passing the application an array without the item to be deleted
+          // Delete the receipt from the database via API
+          // Update the Trip's total to remove the deleted receipts amount and emit across app
+          let newTotal = 0;
+          // currentReceipts.forEach((receipt) => {
+          //   if (receipt.tripId === receiptToDelete.tripId) {
+          //     newTotal += receipt.price;
+          //   }
+          // });
+          this.reciepts.pipe(take(1)).subscribe((receipts) => {
+            receipts.forEach((receipt) => {
+              if (receipt.tripId === receiptToDelete.tripId) {
+                newTotal += receipt.price;
+              }
+            });
+          });
+          console.log("newTotal ======= ", newTotal);
+          // Get the trip by the updatedReceipts tripId
+          let currentTrip: any = {};
+          this.trips.pipe(take(1)).subscribe((trips) => {
+            trips.forEach((trip) => {
+              if (trip.tripId === receiptToDelete.tripId) {
+                currentTrip = trip;
+              }
+            });
+            currentTrip.price = newTotal; // set the trips price to equal to calculated total
+            currentTrip.dateFromAsDate = new Date(currentTrip.dateFrom);
+            currentTrip.dateToAsDate = new Date(currentTrip.dateTo);
+            console.log(currentTrip);
+            // pass the editted trip details into the editTrip method so that it is editted in the database and emitted across the application
+            this.editTrip(currentTrip);
+          });
+        },
+        (error) => {
+          this.presentAlert();
         }
-      });
-    });
-    console.log("newTotal ======= ", newTotal);
-    // Get the trip by the updatedReceipts tripId
-    let currentTrip: any = {};
-    this.trips.pipe(take(1)).subscribe((trips) => {
-      trips.forEach((trip) => {
-        if (trip.tripId === receiptToDelete.tripId) {
-          currentTrip = trip;
-        }
-      });
-      currentTrip.price = newTotal; // set the trips price to equal to calculated total
-      currentTrip.dateFromAsDate = new Date(currentTrip.dateFrom);
-      currentTrip.dateToAsDate = new Date(currentTrip.dateTo);
-      console.log(currentTrip);
-      // pass the editted trip details into the editTrip method so that it is editted in the database and emitted across the application
-      this.editTrip(currentTrip);
-    });
+      );
   }
 
   clearTripsOnLogout() {
     this._trips.next(null);
+  }
+
+  // alert controller used when we fail to reach the database preventing data from being saved
+  async presentAlert() {
+    let alert = await this.alertCtrl.create({
+      header: "Error",
+      message:
+        "Data was not saved, please ensure you have internet connectivity and restart the app.",
+      buttons: [
+        {
+          text: "OK",
+          handler: () => {
+            this.router.navigate(["/trips/tabs/all-trips"]);
+          },
+        },
+      ],
+    });
+    alert.present();
+  }
+
+  // alert controller used when we fail to reach the database preventing data from being saved
+  async presentAlertSuccess(message: string) {
+    console.log("success hit");
+    let alert = await this.alertCtrl.create({
+      header: "Success",
+      message: `${message}`,
+      buttons: [
+        {
+          text: "OK",
+          handler: () => {
+            this.router.navigate(["/trips/tabs/all-trips"]);
+          },
+        },
+      ],
+    });
+    alert.present();
   }
 }
