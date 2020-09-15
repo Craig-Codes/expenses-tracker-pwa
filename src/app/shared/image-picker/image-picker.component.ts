@@ -15,13 +15,13 @@ export class ImagePickerComponent {
 
   onPickImage() {
     Plugins.Camera.getPhoto({
-      quality: 50,
+      quality: 75,
       correctOrientation: true,
       height: 320,
       width: 200,
       allowEditing: false,
       resultType: CameraResultType.DataUrl,
-      source: CameraSource.Photos,
+      source: CameraSource.Prompt,
     })
       .then((image) => {
         this.selectedImage = image.dataUrl; // image base64 string which can be used as an image src
