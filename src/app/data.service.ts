@@ -6,7 +6,7 @@ import { BehaviorSubject } from "rxjs";
 import { HttpParams, HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { take } from "rxjs/operators";
-import { AlertController } from "@ionic/angular";
+import { AlertController, LoadingController } from "@ionic/angular";
 
 @Injectable({
   providedIn: "root",
@@ -16,10 +16,24 @@ export class DataService {
     private userService: UserService,
     private http: HttpClient,
     private router: Router,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private loadingCtrl: LoadingController
   ) {}
 
   baseUrl: string = "https://fierce-hollows-81099.herokuapp.com/";
+
+  private loadingSpinner: any;
+
+  async createSpinner() {
+    this.loadingSpinner = await this.loadingCtrl.create({
+      message: "Please wait...",
+    });
+    await this.loadingSpinner.present();
+  }
+
+  removeSpinner() {
+    this.loadingSpinner.dismiss();
+  }
 
   getInitialDataTrips() {
     console.log(this.userService.user.email);
@@ -50,7 +64,9 @@ export class DataService {
   }
 
   // Update the trips array, emitting the new value to all subscribers and send the new trip to the server
-  newTrip(trip: Trip) {
+  async newTrip(trip: Trip) {
+    this.createSpinner();
+    await this.loadingSpinner.present();
     return this.http.post<any[]>(`${this.baseUrl}trips`, trip).subscribe(
       (res) => {
         // If successful Create a new Trip object and emit across app so that app reflects database state
@@ -65,9 +81,11 @@ export class DataService {
         );
         // get the current value of this._trips and add the newTrip onto it, creating a new value to emit
         this._trips.next(this._trips.getValue().concat(newTrip));
+        this.removeSpinner();
         this.presentAlertSuccess("New trip created and saved.");
       },
       (error) => {
+        this.removeSpinner();
         this.presentAlert();
       }
     );
@@ -76,6 +94,7 @@ export class DataService {
   }
 
   editTrip(updatedTrip: any) {
+    this.createSpinner();
     // Update the trip on the database by sending it to the server
     // convert the dates to strings in the correct format, as need to send data as string in http request (converted back to dates for storage by the server):
     let dateToString = updatedTrip.dateFromAsDate.toISOString();
@@ -115,9 +134,11 @@ export class DataService {
           );
           newTripsArray.push(edittedTrip);
           this._trips.next(newTripsArray);
+          this.removeSpinner;
           this.presentAlertSuccess("Data has been saved.");
         },
         (err) => {
+          this.removeSpinner;
           // If error, then data has not been updated in database or app
           this.presentAlert();
         }
