@@ -19,7 +19,7 @@ export class DataService {
     private alertCtrl: AlertController
   ) {}
 
-  baseUrl: string = "https://expenses-tracker-backend-node.herokuapp.com/";
+  baseUrl: string = "https://fierce-hollows-81099.herokuapp.com/";
 
   getInitialDataTrips() {
     console.log(this.userService.user.email);
