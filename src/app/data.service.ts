@@ -18,22 +18,15 @@ export class DataService {
     private router: Router,
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController
-  ) {}
+  ) {
+    this.loadingSpinner = this.loadingCtrl.create({
+      message: "Please wait...",
+    });
+  }
 
   baseUrl: string = "https://fierce-hollows-81099.herokuapp.com/";
 
   private loadingSpinner: any;
-
-  async createSpinner() {
-    this.loadingSpinner = await this.loadingCtrl.create({
-      message: "Please wait...",
-    });
-    await this.loadingSpinner.present();
-  }
-
-  removeSpinner() {
-    this.loadingSpinner.dismiss();
-  }
 
   getInitialDataTrips() {
     console.log(this.userService.user.email);
@@ -65,8 +58,7 @@ export class DataService {
 
   // Update the trips array, emitting the new value to all subscribers and send the new trip to the server
   async newTrip(trip: Trip) {
-    this.createSpinner();
-    await this.loadingSpinner.present();
+    this.loadingSpinner.present();
     return this.http.post<any[]>(`${this.baseUrl}trips`, trip).subscribe(
       (res) => {
         // If successful Create a new Trip object and emit across app so that app reflects database state
@@ -81,11 +73,11 @@ export class DataService {
         );
         // get the current value of this._trips and add the newTrip onto it, creating a new value to emit
         this._trips.next(this._trips.getValue().concat(newTrip));
-        this.removeSpinner();
+        this.loadingSpinner.dismiss();
         this.presentAlertSuccess("New trip created and saved.");
       },
       (error) => {
-        this.removeSpinner();
+        this.loadingSpinner.dismiss();
         this.presentAlert();
       }
     );
@@ -94,7 +86,7 @@ export class DataService {
   }
 
   editTrip(updatedTrip: any) {
-    this.createSpinner();
+    this.loadingSpinner.present();
     // Update the trip on the database by sending it to the server
     // convert the dates to strings in the correct format, as need to send data as string in http request (converted back to dates for storage by the server):
     let dateToString = updatedTrip.dateFromAsDate.toISOString();
@@ -134,24 +126,26 @@ export class DataService {
           );
           newTripsArray.push(edittedTrip);
           this._trips.next(newTripsArray);
-          this.removeSpinner;
+          this.loadingSpinner.dismiss();
           this.presentAlertSuccess("Data has been saved.");
         },
         (err) => {
-          this.removeSpinner;
           // If error, then data has not been updated in database or app
+          this.loadingSpinner.dismiss();
           this.presentAlert();
         }
       );
   }
 
   deleteTrip(tripId: string) {
+    this.loadingSpinner.present();
     // Delete the trip and associated receipts from the database
     const params = new HttpParams().set("tripId", tripId); // pass the current tripId as a parameter
     return this.http
       .delete<any>(`${this.baseUrl}trips`, { params })
       .subscribe(
         (res) => {
+          this.loadingSpinner.dismiss();
           this.presentAlertSuccess("Trip has been deleted.");
           // Delete the Trip from the local app to reflect database changes
           const newTripsArray: Trip[] = [];
@@ -175,6 +169,7 @@ export class DataService {
           this._reciepts.next(newReceiptsArray); // emit the newTripsArray, passing the application an array without the item to be deleted
         },
         (error) => {
+          this.loadingSpinner.dismiss();
           this.presentAlert();
         }
       );
@@ -198,6 +193,7 @@ export class DataService {
   }
 
   newReceipt(receipt: Receipt) {
+    this.loadingSpinner.present();
     // Create a new Trip object
     let newReceipt = new Receipt(
       receipt.user,
@@ -239,12 +235,14 @@ export class DataService {
         });
       },
       (error) => {
+        this.loadingSpinner.dismiss();
         this.presentAlert();
       }
     );
   }
 
   editReceipt(updatedReceipt: any) {
+    this.loadingSpinner.present();
     let putData = {
       user: updatedReceipt.tripId,
       tripId: updatedReceipt.location,
@@ -300,6 +298,7 @@ export class DataService {
           this.editTrip(currentTrip);
         },
         (error) => {
+          this.loadingSpinner.dismiss();
           this.presentAlert();
         }
       );
@@ -310,6 +309,7 @@ export class DataService {
   }
 
   deleteReceipt(receiptToDelete: any) {
+    this.loadingSpinner.present();
     const params = new HttpParams().set("timestamp", receiptToDelete.timestamp); // pass the receipt timestamp as a parameter
     this.http
       .delete<any>(`${this.baseUrl}receipts`, { params })
@@ -358,6 +358,7 @@ export class DataService {
           });
         },
         (error) => {
+          this.loadingSpinner.dismiss();
           this.presentAlert();
         }
       );
