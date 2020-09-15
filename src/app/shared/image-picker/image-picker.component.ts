@@ -15,7 +15,7 @@ export class ImagePickerComponent {
 
   onPickImage() {
     Plugins.Camera.getPhoto({
-      quality: 100,
+      quality: 25,
       allowEditing: false,
       resultType: CameraResultType.DataUrl,
       source: CameraSource.Prompt,
