@@ -1,8 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-
 import { UserService } from "../user.service";
 import { Router } from "@angular/router";
-
 import { AngularFireAuth } from "@angular/fire/auth";
 import { Subscription } from "rxjs/internal/Subscription";
 
@@ -46,7 +44,7 @@ export class AuthPage implements OnInit {
 
   signInRedirect(user: User) {
     this.userService.user = user;
-    // assign the user service user to the sign in fetched user profile
+    // assign the user service user to the sign in fetched user profile via firebase
     if (this.userService.user) {
       // if the user has a value, set the loggedIn property to true so that the authguard will allow the redirect
       this.userService.loggedIn = true;

@@ -106,12 +106,12 @@ export class AllTripsPage implements OnInit, OnDestroy {
             usersRecieptArray.push(createdReceipt);
           });
           this.dataService.getInitialReciepts(usersRecieptArray);
+          this.isLoading = false;
+          this.firstTimeLoadFlag = true; // http requests will not be made when we go to this page anymore, and the loading controlled will not appear telling users about the server
+          setTimeout(() => {
+            loading.dismiss();
+          }, 1000);
         });
-      this.isLoading = false;
-      this.firstTimeLoadFlag = true; // http requests will not be made when we go to this page anymore, and the loading controlled will not appear telling users about the server
-      setTimeout(() => {
-        loading.dismiss();
-      }, 1000);
     }
   }
 

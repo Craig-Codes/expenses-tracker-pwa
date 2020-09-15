@@ -6,8 +6,8 @@ import { UserService } from "../user.service";
 @Injectable({
   providedIn: "root",
 })
+// guard is implemented before page is loaded, as specified in the app routing module
 export class AuthGuard implements CanLoad {
-  // guard is implemented before page is loaded!
   constructor(private userService: UserService, private router: Router) {}
 
   canLoad(

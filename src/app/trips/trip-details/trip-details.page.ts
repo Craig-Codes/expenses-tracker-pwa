@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import { Trip } from "src/app/models/trip.model";
 import { Subscription } from "rxjs";
 import { ActivatedRoute } from "@angular/router";
 import { DataService } from "src/app/data.service";
 import { NavController } from "@ionic/angular";
 import { map } from "rxjs/operators";
+
+import { Trip } from "src/app/models/trip.model";
 import { Receipt } from "src/app/models/reciept.model";
 
 @Component({
