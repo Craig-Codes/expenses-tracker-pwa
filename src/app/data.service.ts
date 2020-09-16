@@ -22,8 +22,6 @@ export class DataService {
 
   baseUrl: string = "https://fierce-hollows-81099.herokuapp.com/";
 
-  private loadingSpinner: any;
-
   getInitialDataTrips() {
     console.log(this.userService.user.email);
     const params = new HttpParams().set("user", this.userService.user.email); // get the current user
