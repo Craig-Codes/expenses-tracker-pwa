@@ -322,7 +322,14 @@ export class DataService {
       message: "please wait...",
     });
     loadingSpinner.present();
-    const params = new HttpParams().set("timestamp", receiptToDelete.timestamp); // pass the receipt timestamp as a parameter
+    let putData = {
+      user: receiptToDelete.tripId,
+      tripId: receiptToDelete.location,
+      image: receiptToDelete.description,
+      price: receiptToDelete.price,
+      timestamp: receiptToDelete.timestamp,
+    };
+    let params = new HttpParams({ fromObject: putData });
     this.http
       .delete<any>(`${this.baseUrl}receipts`, { params })
       .subscribe(
@@ -337,14 +344,8 @@ export class DataService {
             }
           });
           this._reciepts.next(newReceiptsArray); // emit the newReceiptsArray, passing the application an array without the item to be deleted
-          // Delete the receipt from the database via API
           // Update the Trip's total to remove the deleted receipts amount and emit across app
           let newTotal = 0;
-          // currentReceipts.forEach((receipt) => {
-          //   if (receipt.tripId === receiptToDelete.tripId) {
-          //     newTotal += receipt.price;
-          //   }
-          // });
           this.reciepts.pipe(take(1)).subscribe((receipts) => {
             receipts.forEach((receipt) => {
               if (receipt.tripId === receiptToDelete.tripId) {

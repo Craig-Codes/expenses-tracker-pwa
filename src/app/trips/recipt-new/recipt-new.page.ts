@@ -58,7 +58,7 @@ export class ReciptNewPage implements OnInit {
     this.newReceipt.tripId = this.tripId;
     this.newReceipt.image = this.form.value.image;
     this.newReceipt.price = this.form.value.price;
-    this.newReceipt.timestamp = new Date();
+    this.newReceipt.timestamp = new Date().toISOString();
     this.dataService.newReceipt(this.newReceipt);
   }
 }

@@ -15,7 +15,7 @@ export class ImagePickerComponent {
 
   onPickImage() {
     Plugins.Camera.getPhoto({
-      quality: 25,
+      quality: 10, // quality doesn't need to be really high, as long as receipts are legible. Smaller iamges will save room in the database
       allowEditing: false,
       resultType: CameraResultType.DataUrl,
       source: CameraSource.Prompt,

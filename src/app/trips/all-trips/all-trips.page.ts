@@ -61,9 +61,7 @@ export class AllTripsPage implements OnInit, OnDestroy {
       // App will not work until we get successful server replies, ensuring user is online
       const loading = await this.loadingCtrl.create({
         message:
-          "Fetching initial data, please ensure you have internet connectivity ... This application is currently hosted on a free Heroku server, " +
-          "meaning that the server must wake up before data can be fetched. " +
-          "Please allow 30 seconds for this process if the application has not been used in over an hour as the server will be sleeping.",
+          "Fetching initial data, please ensure you have internet connectivity ... ",
       });
       loading.present();
       // Subscribe to any changes in the data service getInitialDataTrips method, essentially calling the method and making each returned trip into a Trip object

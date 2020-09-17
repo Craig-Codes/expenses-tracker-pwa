@@ -5,6 +5,6 @@ export class Receipt {
     public tripId: string,
     public image: string,
     public price: number,
-    public timestamp: Date
+    public timestamp: string
   ) {}
 }
