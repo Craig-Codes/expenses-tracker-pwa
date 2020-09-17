@@ -20,7 +20,7 @@ export class UserService implements OnInit {
   }
 
   set user(userData: any) {
-    console.log(userData);
+    // console.log(userData);
     this._user = userData;
   }
 
