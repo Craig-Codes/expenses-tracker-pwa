@@ -6,6 +6,7 @@ import { Subscription } from "rxjs/internal/Subscription";
 
 import { cfaSignIn } from "capacitor-firebase-auth";
 import { User } from "firebase";
+import { AlertController } from "@ionic/angular";
 
 @Component({
   selector: "app-auth",
@@ -19,27 +20,21 @@ export class AuthPage implements OnInit {
   constructor(
     private userService: UserService,
     private router: Router,
-    public angularFire: AngularFireAuth // required to setup the google authentication connection
+    public angularFire: AngularFireAuth, // required to setup the google authentication connection
+    private alertCtrl: AlertController
   ) {}
 
   ngOnInit() {}
 
-  signInWithGoogleNative() {
-    cfaSignIn("google.com").subscribe((user: User) => {
-      this.signInRedirect(user);
-    });
-  }
-
-  signInWithFacebookNative() {
-    cfaSignIn("facebook.com").subscribe((user: User) => {
-      this.signInRedirect(user);
-    });
-  }
-
-  signInWithTwitterNative() {
-    cfaSignIn("twitter.com").subscribe((user: User) => {
-      this.signInRedirect(user);
-    });
+  async signIn(provider: string) {
+    cfaSignIn(provider).subscribe(
+      (user: User) => {
+        this.signInRedirect(user);
+      },
+      (err) => {
+        this.presentAlert(err.message);
+      }
+    );
   }
 
   signInRedirect(user: User) {
@@ -50,5 +45,14 @@ export class AuthPage implements OnInit {
       this.userService.loggedIn = true;
       this.router.navigate(["/trips/tabs/all-trips"]);
     }
+  }
+
+  async presentAlert(errorMessage) {
+    let alert = await this.alertCtrl.create({
+      header: "Error",
+      message: errorMessage,
+      buttons: ["Ok"],
+    });
+    alert.present();
   }
 }

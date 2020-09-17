@@ -20,12 +20,13 @@ export class DataService {
     private loadingCtrl: LoadingController
   ) {}
 
+  // URL of node.js backend, hosted on Heroku's free plan
   baseUrl: string = "https://fierce-hollows-81099.herokuapp.com/";
 
   getInitialDataTrips() {
-    console.log(this.userService.user.email);
+    // console.log(this.userService.user.email);
     const params = new HttpParams().set("user", this.userService.user.email); // get the current user
-    return this.http.get<any[]>(`${this.baseUrl}trips`, { params });
+    return this.http.get<any[]>(`${this.baseUrl}trips`, { params }); // returned so that we can subscribe in component which needs the information
   }
 
   getInitialDataReceipts() {
@@ -78,8 +79,6 @@ export class DataService {
         this.presentAlert();
       }
     );
-    // Navigate back to all trips page
-    // this.router.navigate(["/trips/tabs/all-trips"]);
   }
 
   async editTrip(updatedTrip: any) {
@@ -107,7 +106,7 @@ export class DataService {
           // If we get a response, trip has saved so we want to ammend these details in the application to refelct database state
           const newTripsArray: Trip[] = [];
           const currentTrips = this._trips.getValue();
-          console.log(updatedTrip);
+          // console.log(updatedTrip);
           // loop through the current trips and add all trips which do not have the editted trip's id into a new array.
           // The updated trip is then also pushed to this new array, which can be emitted to update the value around the app.
           currentTrips.forEach((trip) => {
@@ -216,7 +215,7 @@ export class DataService {
         // get all receipts which belong to the trip, loop through them to get total price
         const currentReceipts = this._reciepts.getValue();
         let newTotal = 0;
-        console.log(currentReceipts);
+        // console.log(currentReceipts);
         currentReceipts.forEach((receipt) => {
           if (receipt.tripId === newReceipt.tripId) {
             newTotal += receipt.price;
@@ -281,15 +280,13 @@ export class DataService {
       this._reciepts.next(newReceiptsArray);
       // Update the Receipt on the database by sending it to the server
       // convert the dates to strings in the correct format, as need to send data as string in http request (converted back to dates for storage by the server):
-      console.log(typeof edittedReceipt.timestamp);
       let newTotal = 0;
-      console.log(currentReceipts);
       currentReceipts.forEach((receipt) => {
         if (receipt.tripId === updatedReceipt.tripId) {
           newTotal += receipt.price;
         }
       });
-      console.log("newTotal ======= ", newTotal);
+      // console.log("newTotal ======= ", newTotal);
       // Get the trip by the updatedReceipts tripId
       let currentTrip: any = {};
       this.trips.pipe(take(1)).subscribe(
@@ -311,9 +308,6 @@ export class DataService {
           this.presentAlert();
         }
       );
-
-      // Deal with the Trip. Price needs updated, emitted across the app, and sent to the database
-      // Get the current total of all receipts with matching tripId's to the currently editted trip
     });
   }
 
@@ -353,7 +347,6 @@ export class DataService {
               }
             });
           });
-          console.log("newTotal ======= ", newTotal);
           // Get the trip by the updatedReceipts tripId
           let currentTrip: any = {};
           this.trips.pipe(take(1)).subscribe((trips) => {

@@ -23,7 +23,6 @@ export class ReciptNewPage implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe((paramMap) => {
       this.tripId = paramMap.get("tripId"); // get the id from the route params
-      console.log(this.tripId);
     });
     // create the reactive form
     this.form = new FormGroup({
@@ -51,8 +50,6 @@ export class ReciptNewPage implements OnInit {
     if (!this.form.valid || !this.form.get("image").value) {
       return;
     }
-    console.log(this.form.value.image);
-    console.log(this.form.value.price);
     // send new receipt data to the data service to save to database and emit through application
     this.newReceipt.user = this.userService.user.email;
     this.newReceipt.tripId = this.tripId;

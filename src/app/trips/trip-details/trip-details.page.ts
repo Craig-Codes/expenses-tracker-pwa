@@ -33,13 +33,12 @@ export class TripDetailsPage implements OnInit, OnDestroy {
     // subscribe to any changes on the incoming route - using paraMap observable which contains route information
     this.route.paramMap.subscribe((paramMap) => {
       //check to make sure the route has a tripId param
-      console.log(paramMap);
+      // console.log(paramMap);
       if (!paramMap.has("tripId")) {
         // throw an error - "no trip found, please try again" then navigate away
         this.navCtrl.navigateBack("/trips/tabs/all-trips");
         return;
       }
-      console.log("Id found");
       this.isLoading = true;
       this.tripId = paramMap.get("tripId"); // get the id from the route params
       this.isLoading = true; // start the spinner whilst data is retrieved - as data is already in memory this shouldn't really be needed
@@ -48,7 +47,7 @@ export class TripDetailsPage implements OnInit, OnDestroy {
         .pipe(
           // the map rxjs operator is used to transform the recieved array into different data, re-mapping the data
           map((tripsArray) => {
-            console.log(tripsArray);
+            // console.log(tripsArray);
             this.tripToEdit = tripsArray.filter((trip) => {
               return trip.tripId === this.tripId;
             }); // use the array filter method to filter out the trip matching the trip.id taken from route params

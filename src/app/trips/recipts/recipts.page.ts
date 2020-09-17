@@ -56,7 +56,6 @@ export class ReciptsPage implements OnInit {
 
   onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {
     try {
-      console.log("filtering");
       if (event.detail.value === "recent") {
         this.orderedReciepts.sort((a, b) => {
           if (a.timestamp < b.timestamp) return 1;

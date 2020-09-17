@@ -26,7 +26,7 @@ export class ReciptDetailsPage implements OnInit {
   ngOnInit() {
     // subscribe to any changes on the incoming route - using paraMap observable which contains route information
     this.route.paramMap.subscribe((paramMap) => {
-      console.log(paramMap);
+      // console.log(paramMap);
       // check to make sure the route has a timeStamp param to identify the receipt
       if (!paramMap.has("timeStamp")) {
         // throw an error - "no trip found, please try again" then navigate away
@@ -35,7 +35,6 @@ export class ReciptDetailsPage implements OnInit {
       }
       this.isLoading = true;
       this.receiptTimeStamp = paramMap.get("timeStamp"); // get the timestamp from the route params
-      console.log(this.receiptTimeStamp);
       this.isLoading = true; // start the spinner whilst data is retrieved - as data is already in memory this shouldn't really be needed
       // whenever we get a new route, we get the latest behaviourSubject / value of the trips array in the dataService
       this.receiptSubscription = this.dataService.reciepts
@@ -50,7 +49,7 @@ export class ReciptDetailsPage implements OnInit {
         .subscribe(() => {
           // we now have the necessary Trip information, remove loading spinner.
           this.isLoading = false;
-          console.log(this.receiptToEdit[0]);
+          // console.log(this.receiptToEdit[0]);
         });
     });
   }

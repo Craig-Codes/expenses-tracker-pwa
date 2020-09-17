@@ -1,16 +1,10 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Trip } from "../../models/trip.model";
 import { DataService } from "../../data.service";
 import { Subscription } from "rxjs";
 import { map } from "rxjs/operators";
 import { NavController, AlertController } from "@ionic/angular";
-import {
-  FormGroup,
-  FormControl,
-  Validators,
-  ReactiveFormsModule,
-} from "@angular/forms";
+import { FormGroup, FormControl, Validators } from "@angular/forms";
 
 @Component({
   selector: "app-trip-edit",
@@ -89,7 +83,6 @@ export class TripEditPage implements OnInit, OnDestroy {
   }
 
   onUpdateTrip() {
-    console.log("updating trip...");
     // ensure the form is valid
     if (!this.form.valid) {
       return;

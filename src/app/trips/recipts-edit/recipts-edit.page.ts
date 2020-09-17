@@ -5,12 +5,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { DataService } from "../../data.service";
 import { NavController, AlertController } from "@ionic/angular";
 import { map } from "rxjs/operators";
-import {
-  FormGroup,
-  FormControl,
-  Validators,
-  ReactiveFormsModule,
-} from "@angular/forms";
+import { FormGroup, FormControl, Validators } from "@angular/forms";
 
 @Component({
   selector: "app-recipts-edit",
@@ -36,7 +31,7 @@ export class ReciptsEditPage implements OnInit {
   ngOnInit() {
     // subscribe to any changes on the incoming route - using paraMap observable which contains route information
     this.route.paramMap.subscribe((paramMap) => {
-      console.log(paramMap);
+      // console.log(paramMap);
       // check to make sure the route has a timeStamp param to identify the receipt
       if (!paramMap.has("timeStamp")) {
         // throw an error - "no trip found, please try again" then navigate away
@@ -45,7 +40,6 @@ export class ReciptsEditPage implements OnInit {
       }
       this.isLoading = true;
       this.receiptTimeStamp = paramMap.get("timeStamp"); // get the timestamp from the route params
-      console.log(this.receiptTimeStamp);
       // whenever we get a new route, we get the latest behaviourSubject / value of the trips array in the dataService
       this.receiptSubscription = this.dataService.reciepts
         .pipe(

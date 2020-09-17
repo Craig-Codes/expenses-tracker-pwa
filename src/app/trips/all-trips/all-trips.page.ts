@@ -66,10 +66,10 @@ export class AllTripsPage implements OnInit, OnDestroy {
       loading.present();
       // Subscribe to any changes in the data service getInitialDataTrips method, essentially calling the method and making each returned trip into a Trip object
       this.dataService.getInitialDataTrips().subscribe((returnedTrips) => {
-        console.log("retrieved initial trips");
+        // console.log("retrieved initial trips");
         const usersTripArray: Trip[] = [];
         returnedTrips.forEach((trip) => {
-          console.log(trip);
+          // console.log(trip);
           let createdTrip = new Trip(
             trip.user,
             trip.tripId,
@@ -91,7 +91,7 @@ export class AllTripsPage implements OnInit, OnDestroy {
         .subscribe((returnedReciepts) => {
           const usersRecieptArray: Receipt[] = [];
           returnedReciepts.forEach((reciept) => {
-            console.log(reciept);
+            // console.log(reciept);
             let createdReceipt = new Receipt(
               reciept.user,
               reciept.tripId,
@@ -114,7 +114,6 @@ export class AllTripsPage implements OnInit, OnDestroy {
 
   onFilterUpdate(event: CustomEvent<SegmentChangeEventDetail>) {
     try {
-      console.log("filtering");
       if (event.detail.value === "recent") {
         this.orderedTrips.sort((a, b) => {
           if (a.dateFrom < b.dateFrom) return 1;
