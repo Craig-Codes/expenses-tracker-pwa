@@ -28,12 +28,10 @@ $ionic serve
 
 This project is easily converted into a native Android application. After making any changes simply follow these commands:
 
-``
+```
 $ionic build --prod
 $npx cap copy android
-\$npx cap open android
-
+$npx cap open android
 ```
 
 The app will now open up in android studio, where it can be tried on an emulator, or on your own android device.
-```
