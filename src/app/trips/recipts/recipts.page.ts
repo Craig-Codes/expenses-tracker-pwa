@@ -71,7 +71,6 @@ export class ReciptsPage implements OnInit {
       }
     } catch {
       // if no trips then we dont want to sort. Catch the error
-      console.log("no reciepts to sort");
     }
   }
 

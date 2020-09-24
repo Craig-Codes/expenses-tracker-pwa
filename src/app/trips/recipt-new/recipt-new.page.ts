@@ -29,11 +29,10 @@ export class ReciptNewPage implements OnInit {
       // We use patch Value on this form control once we have an image so that its updated!
       image: new FormControl(null),
       price: new FormControl(null, {
-        updateOn: "blur",
         validators: [
           Validators.required,
-          Validators.maxLength(7),
-          Validators.minLength(1),
+          Validators.max(10000),
+          Validators.min(-100),
         ],
       }),
     });
@@ -54,7 +53,7 @@ export class ReciptNewPage implements OnInit {
     this.newReceipt.user = this.userService.user.email;
     this.newReceipt.tripId = this.tripId;
     this.newReceipt.image = this.form.value.image;
-    this.newReceipt.price = this.form.value.price;
+    this.newReceipt.price = Number(this.form.value.price.toFixed(2)); // toFixed returns a string of the price limited to 2 decimal places. Number converts this back into a number again
     this.newReceipt.timestamp = new Date().toISOString();
     this.dataService.newReceipt(this.newReceipt);
   }

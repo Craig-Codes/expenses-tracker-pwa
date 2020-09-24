@@ -67,7 +67,7 @@ export class DataService {
           trip.description,
           trip.dateFrom,
           trip.dateTo,
-          trip.price
+          Number(trip.price.toFixed(2)) // ensure trip total is rounded to 2 decimal places
         );
         // get the current value of this._trips and add the newTrip onto it, creating a new value to emit
         this._trips.next(this._trips.getValue().concat(newTrip));
@@ -222,6 +222,7 @@ export class DataService {
           }
         });
         console.log("newTotal ======= ", newTotal);
+        newTotal = Number(newTotal.toFixed(2)); // check to ensure total is rounded to 2 decimal places
         // fetch current trip, make its price equal total price
         let currentTrip: any = {};
         // subscribing to a behaviour subject gives the current value
@@ -394,7 +395,6 @@ export class DataService {
 
   // alert controller used when we fail to reach the database preventing data from being saved
   async presentAlertSuccess(message: string) {
-    console.log("success hit");
     let alert = await this.alertCtrl.create({
       header: "Success",
       message: `${message}`,

@@ -17,6 +17,10 @@ export class TripEditPage implements OnInit, OnDestroy {
   private tripSubscription: Subscription;
 
   isLoading = false;
+  minYear: string;
+  maxYear: string;
+  dateError = false;
+  dateMessage = false;
 
   form: FormGroup;
 
@@ -29,6 +33,17 @@ export class TripEditPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.minYear = (new Date().getFullYear() - 1).toString();
+    this.maxYear = (
+      new Date().getFullYear() +
+      1 +
+      "-" +
+      new Date().getMonth() +
+      1 +
+      "-" +
+      new Date().getDate()
+    ).toString();
+
     // subscribe to any changes on the incoming route - using paraMap observable which contains route information
     this.route.paramMap.subscribe((paramMap) => {
       //check to make sure the route has a tripId param
@@ -58,19 +73,15 @@ export class TripEditPage implements OnInit, OnDestroy {
     // create the reactive form
     this.form = new FormGroup({
       location: new FormControl(null, {
-        updateOn: "blur",
         validators: [Validators.required],
       }),
       description: new FormControl(null, {
-        updateOn: "blur",
         validators: [Validators.required, Validators.maxLength(180)],
       }),
       dateFrom: new FormControl(null, {
-        updateOn: "blur",
         validators: [Validators.required],
       }),
       dateTo: new FormControl(null, {
-        updateOn: "blur",
         validators: [Validators.required],
       }),
     });
@@ -135,6 +146,25 @@ export class TripEditPage implements OnInit, OnDestroy {
       .then((alertEl) => {
         alertEl.present();
       });
+  }
+
+  compareTwoDates() {
+    // Get the dates from the input. Slice the first 10 characters so we don't get the minutes, this isnt necessary and causes bugs
+    try {
+      if (
+        this.form.value.dateFrom.slice(0, 10) >
+          this.form.value.dateTo.slice(0, 10) ||
+        this.form.value.dateFrom === null
+      ) {
+        this.dateError = true;
+        this.dateMessage = true;
+      } else {
+        this.dateError = false;
+        this.dateMessage = false;
+      }
+    } catch {
+      // catch the error to stop it throwing in the console
+    }
   }
 
   ngOnDestroy() {

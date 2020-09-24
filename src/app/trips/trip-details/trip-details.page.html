@@ -31,16 +31,9 @@
           </ion-card-header>
           <ion-card-content>
             <p>{{ tripToEdit[0].description }}</p>
-            <p class="price">£{{ tripToEdit[0].price }}</p>
+            <p class="price">£{{ tripToEdit[0].price.toFixed(2) }}</p>
           </ion-card-content>
         </ion-card>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col size="12" size-sm="8" offset-sm="2" class="ion-text-center">
-        <ion-button color="primary" [routerLink]="['/recipt-new', tripId]">
-          <ion-icon name="barcode-outline" slot="start"></ion-icon> Add Receipt
-        </ion-button>
       </ion-col>
     </ion-row>
     <ion-row>
@@ -62,7 +55,7 @@
           </ion-item>
           <ion-item-options side="start">
             <ion-item-option
-              color="primary"
+              color="tertiary"
               [routerLink]="['/recipts-edit', receipt.timestamp.toString()]"
             >
               <ion-icon slot="end" name="create-outline"></ion-icon>Edit
@@ -77,6 +70,29 @@
             </ion-item-option>
           </ion-item-options>
         </ion-item-sliding>
+      </ion-col>
+      <ion-col size="12" size-sm="8" offset-sm="2" class="ion-text-center">
+        <p class="info">
+          Slide receipt left to edit, or right to view its details
+        </p>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size-sm="6" offset-sm="3" class="ion-text-center">
+        <ion-button
+          color="primary"
+          [routerLink]="['/recipt-new', tripId]"
+          class="add"
+        >
+          <ion-icon name="barcode-outline" slot="start"></ion-icon> Add Receipt
+        </ion-button>
+        <ion-button
+          color="tertiary"
+          [routerLink]="['/trip-edit', tripId]"
+          class="edit"
+        >
+          <ion-icon name="create-outline" slot="start"></ion-icon> Edit Trip
+        </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>

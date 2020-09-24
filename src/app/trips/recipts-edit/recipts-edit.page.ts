@@ -60,11 +60,10 @@ export class ReciptsEditPage implements OnInit {
     this.form = new FormGroup({
       // We use patch Value on this form control once we have an image so that its updated!
       price: new FormControl(null, {
-        updateOn: "blur",
         validators: [
           Validators.required,
-          Validators.maxLength(7),
-          Validators.minLength(1),
+          Validators.max(10000),
+          Validators.min(-100),
         ],
       }),
     });
@@ -81,7 +80,7 @@ export class ReciptsEditPage implements OnInit {
       // if the price has not changed, simply navigate back. Check is here to reduce API calls
       this.router.navigate(["/trips/tabs/all-trips"]);
     } else {
-      this.receiptToEdit[0].price = this.form.value.price; // update the receipt with new price
+      this.receiptToEdit[0].price = Number(this.form.value.price.toFixed(2)); // toFixed returns a string of the price limited to 2 decimal places. Number converts this back into a number again
       // pass in the receipt to the data service edit receipt method
       this.dataService.editReceipt(this.receiptToEdit[0]);
     }

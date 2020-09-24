@@ -129,7 +129,6 @@ export class AllTripsPage implements OnInit, OnDestroy {
       }
     } catch {
       // if no trips then we dont want to sort. Catch the error
-      console.log("no trips to sort");
     }
   }
 

@@ -11,6 +11,10 @@ import { UserService } from "../../user.service";
 export class TripNewPage implements OnInit {
   form: FormGroup;
   newTrip: any = {}; // variable to hold the new trip data
+  minYear: string;
+  maxYear: string;
+  dateError = true;
+  dateMessage = false;
 
   constructor(
     private dataService: DataService,
@@ -18,14 +22,23 @@ export class TripNewPage implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.minYear = (new Date().getFullYear() - 1).toString();
+    this.maxYear = (
+      new Date().getFullYear() +
+      1 +
+      "-" +
+      new Date().getMonth() +
+      1 +
+      "-" +
+      new Date().getDate()
+    ).toString();
+
     // create the reactive form
     this.form = new FormGroup({
       location: new FormControl(null, {
-        updateOn: "blur",
         validators: [Validators.required],
       }),
       description: new FormControl(null, {
-        updateOn: "blur",
         validators: [
           Validators.required,
           Validators.maxLength(180),
@@ -33,11 +46,9 @@ export class TripNewPage implements OnInit {
         ],
       }),
       dateFrom: new FormControl(null, {
-        updateOn: "blur",
         validators: [Validators.required],
       }),
       dateTo: new FormControl(null, {
-        updateOn: "blur",
         validators: [Validators.required],
       }),
     });
@@ -75,5 +86,24 @@ export class TripNewPage implements OnInit {
 
     tripId = locationData + descriptionData + dateFromData + dateToData;
     return tripId; // returns a complex id made up of inputted data
+  }
+
+  compareTwoDates() {
+    // Get the dates from the input. Slice the first 10 characters so we don't get the minutes, this isnt necessary and causes bugs
+    try {
+      if (
+        this.form.value.dateFrom.slice(0, 10) >
+          this.form.value.dateTo.slice(0, 10) ||
+        this.form.value.dateFrom === null
+      ) {
+        this.dateError = true;
+        this.dateMessage = true;
+      } else {
+        this.dateError = false;
+        this.dateMessage = false;
+      }
+    } catch {
+      // catch the error to stop it throwing in the console
+    }
   }
 }
