@@ -184,12 +184,12 @@ export class TripDetailsPage implements OnInit, OnDestroy {
     if (this.platform.is("cordova")) {
       this.pdfObj.getBase64(async (data) => {
         try {
-          let path = `pdf/myTrip_${Date.now()}.pdf`;
+          let path = `myTrip_${Date.now()}.pdf`;
           // write the file to the local file system
           const result = await Filesystem.writeFile({
             path,
             data,
-            directory: FilesystemDirectory.Documents,
+            directory: FilesystemDirectory.External,
             recursive: true,
           });
           // once file is written, open it
