@@ -58,7 +58,7 @@
           <!-- timestamp will always be unique so can be used to edit receipts-->
           <ion-item detail>
             <ion-thumbnail slot="start">
-              <ion-img src="{{ receipt.image }}"></ion-img>
+              <img src="{{ receipt.image }}" />
             </ion-thumbnail>
             <ion-label>
               <h5>{{receipt.timestamp | date: 'dd/MM/yyyy'}}</h5>
