@@ -1,0 +1,46 @@
+<ion-content class="background vertical-align-content">
+  <ion-grid>
+    <ion-row class="row">
+      <ion-col class="ion-text-center ion-align-items-center">
+        <ion-card>
+          <h1>Expenses Tracker</h1>
+          <p>Login using a social option</p>
+          <hr />
+          <ion-buttons class="ion-justify-content-center">
+            <ion-button
+              fill="outline"
+              type="button"
+              (click)="signIn('google.com')"
+              color="tertiary"
+            >
+              <ion-icon name="logo-google" slot="start"></ion-icon>
+              Google
+            </ion-button>
+          </ion-buttons>
+          <ion-buttons class="ion-justify-content-center">
+            <ion-button
+              fill="outline"
+              type="button"
+              (click)="signIn('facebook.com')"
+              color="tertiary"
+            >
+              <ion-icon name="logo-facebook" slot="start"> </ion-icon>
+              Facebook
+            </ion-button>
+          </ion-buttons>
+          <ion-buttons class="ion-justify-content-center">
+            <ion-button
+              fill="outline"
+              type="button"
+              (click)="signIn('twitter.com')"
+              color="tertiary"
+            >
+              <ion-icon name="logo-twitter" slot="start"></ion-icon>
+              Twitter
+            </ion-button>
+          </ion-buttons>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
