@@ -17,14 +17,16 @@ I wanted to try out social login, as an alernative way to save time for users. T
 
 The web version of this app if currently hosted on Firebase.
 
-## Setup
+## Frontend Setup
 
-To run this project locally, fork this repository:
+To run this project locally, fork this repository and navigate to the 'Frontend' directory:
 
 ```
 $npm install
 $ionic serve
 ```
+
+Note: authentication will not work, as firebase auth has been locked down to stop local logins, only accepting login from the correctly hosted domain. To see the working app in action - https://expenses-tracker-app-8c5e9.web.app. To get your own local version working, just swap out the firebase details in the 'environments' directory with your firebase project and authentication details.
 
 This project is easily converted into a native Android application. After making any changes simply follow these commands:
 
@@ -35,3 +37,14 @@ $npx cap open android
 ```
 
 The app will now open up in android studio, where it can be tried on an emulator, or on your own android device.
+
+## Backend API Setup
+
+To run this project locally, fork this repository and navigate to the 'Backend' directory:
+
+```
+$npm install
+$node server.js
+```
+
+Note: you will have no access to the live MongoDB instance, as the URL is a protected environmental varaible only exposed to the Heroku hosting platform. To see the app in action, please view the live workign version (https://expenses-tracker-app-8c5e9.web.app). Alternatively you can create a new MongoDB instance and add the url to line 26.
